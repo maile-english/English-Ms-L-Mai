@@ -10,19 +10,17 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .flashcard { perspective: 1000px; }
-    .flashcard-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
-    .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
-    .flashcard-front, .flashcard-back { backface-visibility: hidden; position: absolute; inset: 0; }
-    .flashcard-back { transform: rotateY(180deg); }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     video::-internal-media-controls-download-button { display:none; }
     video::-webkit-media-controls-enclosure { overflow:hidden; }
     video::-webkit-media-controls-panel { width: calc(100% + 30px); }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col" onclick="closeContextMenu()">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col" onclick="closeContextMenu()">
 
-  <!-- ==================== HEADER ==================== -->
+  <!-- HEADER -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center space-x-3">
@@ -31,7 +29,7 @@
           <h1 class="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
             EngVenture <span class="text-xs bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">THPT Nguyễn Huệ</span>
           </h1>
-          <p class="text-xs text-slate-500">Cổng Dạy & Học Tiếng Anh Trực Tuyến 4.0</p>
+          <p class="text-xs text-slate-500">Cổng Dạy & Học Tiếng Anh Trực Tuyến Chuyên Nghiệp</p>
         </div>
       </div>
 
@@ -53,7 +51,7 @@
     </div>
   </header>
 
-  <!-- ==================== BANNER PROFILE ==================== -->
+  <!-- BANNER PROFILE -->
   <section class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white py-6 shadow-inner">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -80,7 +78,7 @@
     </div>
   </section>
 
-  <!-- ==================== MENU TAB CHÍNH ==================== -->
+  <!-- THANH ĐIỀU HƯỚNG CHÍNH (5 MỤC) -->
   <nav class="bg-white border-b border-slate-200 sticky top-[65px] z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto gap-2 py-2">
       <button onclick="switchMainTab('students')" id="tabBtn-students" class="px-4 py-2 rounded-xl text-sm font-bold bg-blue-50 text-blue-700 flex items-center gap-2 shrink-0">
@@ -101,7 +99,7 @@
     </div>
   </nav>
 
-  <!-- ==================== NỘI DUNG CHÍNH ==================== -->
+  <!-- NỘI DUNG CHÍNH -->
   <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
 
     <!-- 1. QUẢN LÝ HỌC SINH -->
@@ -145,7 +143,7 @@
               <thead class="bg-slate-50 text-slate-600 text-xs font-semibold uppercase sticky top-0">
                 <tr>
                   <th class="px-4 py-2.5">STT</th>
-                  <th class="px-4 py-2.5">Họ và Tên (Xem kết quả cá nhân)</th>
+                  <th class="px-4 py-2.5">Họ và Tên (Xem nhận xét)</th>
                   <th class="px-4 py-2.5">Số lần làm bài</th>
                   <th class="px-4 py-2.5">Điểm TB</th>
                   <th class="px-4 py-2.5 text-right">Xóa</th>
@@ -201,8 +199,8 @@
     <section id="panel-textbook" class="space-y-6 hidden">
       <div id="sgkLevel1" class="space-y-4">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 class="font-bold text-slate-900 text-base">Sách Giáo Khoa (Global Success)</h3>
-          <p class="text-xs text-slate-500">Bấm vào khối lớp để vào bên trong xem các mục bài học</p>
+          <h3 class="font-bold text-slate-900 text-base">Sách Giáo Khoa Tiếng Anh (Global Success)</h3>
+          <p class="text-xs text-slate-500">Bấm vào khối lớp bên dưới để mở toàn bộ các mục bài học</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div onclick="enterGradeFolder('sgk', 10)" class="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition cursor-pointer text-center space-y-3">
@@ -252,12 +250,12 @@
           <div onclick="enterGameHub('sgk')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-amber-500 hover:shadow-lg transition cursor-pointer text-center space-y-2">
             <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto"><i data-lucide="gamepad-2" class="w-6 h-6"></i></div>
             <h4 class="font-bold text-slate-900 text-sm">Game</h4>
-            <p class="text-[11px] text-slate-400">Danh sách & Tạo mới game</p>
+            <p class="text-[11px] text-slate-400">Trò chơi tương tác</p>
           </div>
           <div onclick="enterTopic('exercise', 'sgk')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-lg transition cursor-pointer text-center space-y-2">
             <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto"><i data-lucide="check-square" class="w-6 h-6"></i></div>
             <h4 class="font-bold text-slate-900 text-sm">Bài Tập</h4>
-            <p class="text-[11px] text-slate-400">Làm trực tuyến theo câu</p>
+            <p class="text-[11px] text-slate-400">Luyện tập trực tuyến</p>
           </div>
         </div>
       </div>
@@ -312,7 +310,7 @@
           <div onclick="enterGameHub('hsg')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-amber-500 hover:shadow-lg transition cursor-pointer text-center space-y-2">
             <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto"><i data-lucide="gamepad-2" class="w-6 h-6"></i></div>
             <h4 class="font-bold text-slate-900 text-sm">Game</h4>
-            <p class="text-[11px] text-slate-400">Danh sách & Tạo mới game</p>
+            <p class="text-[11px] text-slate-400">Trò chơi nâng cao</p>
           </div>
           <div onclick="enterTopic('exercise', 'hsg')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-lg transition cursor-pointer text-center space-y-2">
             <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto"><i data-lucide="check-square" class="w-6 h-6"></i></div>
@@ -349,7 +347,7 @@
           <div onclick="enterGameHub('grad')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-amber-500 hover:shadow-lg transition cursor-pointer text-center space-y-2">
             <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto"><i data-lucide="gamepad-2" class="w-6 h-6"></i></div>
             <h4 class="font-bold text-slate-900 text-sm">Game</h4>
-            <p class="text-[11px] text-slate-400">Danh sách & Tạo mới game</p>
+            <p class="text-[11px] text-slate-400">Phản xạ đề thi</p>
           </div>
           <div onclick="enterTopic('exercise', 'grad')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-lg transition cursor-pointer text-center space-y-2">
             <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto"><i data-lucide="check-square" class="w-6 h-6"></i></div>
@@ -360,7 +358,7 @@
       </div>
     </section>
 
-    <!-- MÀN HÌNH QUẢN TRỊ MỤC BÀI HỌC (3 TAB) -->
+    <!-- MÀN HÌNH QUẢN TRỊ BÊN TRONG CỦA MỖI MỤC NHỎ -->
     <section id="panel-topic-manager" class="space-y-4 hidden">
       <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
         <div class="flex items-center gap-3">
@@ -378,50 +376,75 @@
       <!-- 1. Danh sách bài -->
       <div id="topView-list" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
         <div class="flex items-center justify-between">
-          <p class="text-xs text-slate-500">Học sinh có thể bấm "Làm bài này" để tự luyện. Giáo viên kích chuột phải để giao bài:</p>
+          <p class="text-xs text-slate-500">Học sinh bấm "Làm bài này" để làm trực tuyến. Giáo viên kích chuột phải để giao bài:</p>
           <span id="badgeTopicCount" class="text-xs font-bold bg-blue-50 text-blue-700 px-3 py-1 rounded-full">0 bài</span>
         </div>
         <div id="topicItemsContainer" class="space-y-3"></div>
       </div>
 
-      <!-- 2. Tạo bài mới -->
+      <!-- 2. Tạo bài mới (DỰA TRÊN ẢNH 1: CÓ ĐOẠN VĂN/BÀI ĐỌC PHÍA TRÊN & CÂU HỎI TRẮC NGHIỆM PHÍA DƯỚI) -->
       <div id="topView-create" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 hidden">
-        <div class="flex items-center justify-between">
-          <h4 class="font-bold text-slate-900 text-sm">Soạn Bài Mới / Dán Đề Chuyển Sang Trực Tuyến</h4>
-          <span class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-bold">Trắc nghiệm, Viết lại câu, Word form, Sắp xếp câu</span>
+        <div class="flex items-center justify-between border-b pb-3">
+          <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+            <i data-lucide="file-edit" class="w-4 h-4 text-blue-600"></i> Tạo Bài Tập Mới (Bao Gồm Bài Đọc Hiểu & File Nghe MP3)
+          </h4>
+          <span class="text-xs text-slate-400">Định dạng chuẩn theo hệ thống thi trực tuyến</span>
         </div>
 
-        <div class="space-y-3 text-xs">
+        <div class="space-y-4 text-xs">
           <div>
-            <label class="block font-semibold mb-1">Tiêu đề bài tập:</label>
-            <input type="text" id="inTopicNewTitle" class="w-full border rounded-xl p-2.5 font-semibold" placeholder="Ví dụ: Unit 3 - Reading & Vocabulary">
+            <label class="block font-semibold mb-1">Tiêu đề bài tập / đề thi:</label>
+            <input type="text" id="inTopicNewTitle" class="w-full border rounded-xl p-2.5 font-semibold text-slate-800" placeholder="Ví dụ: Luyện đề thi thử tốt nghiệp THPT - Đề số 14">
           </div>
+
+          <!-- MỤC ĐOẠN VĂN / ĐỀ BÀI CHUNG HIỂN THỊ PHÍA TRÊN (BÁM SÁT ẢNH 1 & ẢNH 2) -->
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+            <label class="font-bold text-slate-800 block">Đoạn văn, bài đọc hoặc đề bài chung hiển thị phía trên các câu hỏi:</label>
+            <textarea id="inTopicPassage" rows="5" class="w-full border rounded-xl p-3 font-mono" placeholder="Dán đoạn văn bài đọc hiểu tại đây... (Ví dụ: Are you a solo traveler seeking to explore new places while immersing yourself (1) ______ local culture?...)"></textarea>
+
+            <!-- CÁC NÚT ĐÍNH KÈM ĐA PHƯƠNG TIỆN (ẢNH 1) -->
+            <div class="flex flex-wrap items-center gap-2">
+              <label class="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl font-bold cursor-pointer flex items-center gap-1.5 text-slate-700">
+                <i data-lucide="image" class="w-4 h-4 text-blue-600"></i> Đính kèm hình ảnh
+                <input type="file" id="inExerciseImageFile" accept="image/*" class="hidden" onchange="alert('Đã đính kèm ảnh!')">
+              </label>
+
+              <label class="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl font-bold cursor-pointer flex items-center gap-1.5 text-slate-700">
+                <i data-lucide="volume-2" class="w-4 h-4 text-purple-600"></i> Tải lên file nghe MP3
+                <input type="file" id="inExerciseAudioFile" accept="audio/*" class="hidden" onchange="alert('Đã đính kèm file nghe MP3!')">
+              </label>
+
+              <div class="flex items-center gap-1 bg-white border border-slate-200 px-3 py-1 rounded-xl">
+                <i data-lucide="youtube" class="w-4 h-4 text-rose-600"></i>
+                <input type="text" id="inExerciseYoutubeLink" placeholder="Dán link Youtube..." class="text-xs p-1 focus:outline-none w-48">
+              </div>
+            </div>
+          </div>
+
+          <!-- MỤC COPY - DÁN CÂU HỎI TRẮC NGHIỆM / TỰ LUẬN (ẢNH 1) -->
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label class="font-semibold text-slate-700">Dán câu hỏi vào đây (Đánh dấu * trước phương án đúng, hoặc dòng *Đáp án: ...):</label>
-              <button onclick="insertSampleExercise()" class="text-blue-600 font-bold hover:underline">Chèn mẫu câu hỏi</button>
+              <label class="font-bold text-slate-800">Danh sách câu hỏi (Dán từ Word vào đây):</label>
+              <button onclick="insertSampleReadingExercise()" class="text-blue-600 font-bold hover:underline">Chèn đề mẫu chuẩn</button>
             </div>
-            <textarea id="inTopicNewContent" rows="8" class="w-full border rounded-xl p-3 font-mono" placeholder="Câu 1: In my family, my father is the ______.
-*A. breadwinner
-B. homemaker
-C. heavy lifting
-D. childcare
-Giải thích: Breadwinner nghĩa là trụ cột gia đình.
+            <textarea id="inTopicNewContent" rows="8" class="w-full border rounded-xl p-3 font-mono" placeholder="Question 1. Due to the sudden economic downturn, the company had to ______ its plan.
+A. shelf
+*B. fall back on
+C. pull through
+D. scrap
+Giải thích: Fall back on nghĩa là dùng đến phương án dự phòng.
 
-Câu 2: She was delighted ______ her exam results.
-A. with
-*B. by
-C. for
-D. to
-Giải thích: Delighted by/with something.
-
-Câu 3: The last time I saw her was two years ago.
--> I haven't ______
-*Đáp án: seen her for two years
-Giải thích: Chuyển sang hiện tại hoàn thành."></textarea>
+Question 2. It took him a long time to ______ the disappointment.
+*A. get over
+B. get through to
+C. get round to
+D. get away with
+Giải thích: Get over nghĩa là vượt qua nỗi buồn."></textarea>
+            <p class="text-[11px] text-slate-500 italic mt-1">* Hệ thống tự động nhận diện: Câu hỏi, các đáp án A/B/C/D, dấu * đáp án đúng và lời giải thích.</p>
           </div>
-          <button onclick="saveNewTopicItem()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow">
-            Lưu bài & Chuyển sang dạng trực tuyến
+
+          <button onclick="saveNewTopicItem()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-2">
+            <i data-lucide="check" class="w-4 h-4"></i> Lưu bài & Chuyển sang dạng trực tuyến
           </button>
         </div>
       </div>
@@ -433,7 +456,7 @@ Giải thích: Chuyển sang hiện tại hoàn thành."></textarea>
       </div>
     </section>
 
-    <!-- MÀN HÌNH GAME (CÓ DANH SÁCH GAME & TẠO MỚI GAME) -->
+    <!-- MÀN HÌNH QUẢN TRỊ GAME (DANH SÁCH GAME & TẠO MỚI) -->
     <section id="panel-game-hub" class="space-y-4 hidden">
       <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
         <div class="flex items-center gap-3">
@@ -446,24 +469,21 @@ Giải thích: Chuyển sang hiện tại hoàn thành."></textarea>
         </div>
       </div>
 
-      <!-- 1. Danh sách game -->
+      <!-- Danh sách game -->
       <div id="gView-list" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <p class="text-xs text-slate-500">Học sinh bấm vào trò chơi bất kỳ bên dưới để bắt đầu chơi:</p>
+        <p class="text-xs text-slate-500">Học sinh bấm vào trò chơi để làm bài trực tiếp:</p>
         <div id="gameListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       </div>
 
-      <!-- 2. Tạo mới game -->
+      <!-- Tạo mới game -->
       <div id="gView-create" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 hidden">
         <h4 class="font-bold text-slate-900 text-sm">Tạo Trò Chơi Mới</h4>
         <div class="space-y-3 text-xs">
           <div>
             <label class="block font-semibold mb-1">Thể loại trò chơi:</label>
             <select id="inGameType" class="w-full border rounded-xl p-2.5 bg-slate-50 font-bold text-amber-800">
-              <option value="match">1. Nối từ (Word Match)</option>
-              <option value="quiz">2. Quiz trắc nghiệm tốc độ</option>
-              <option value="listen_choose">3. Nghe chọn từ (Listening Quiz)</option>
-              <option value="listen_write">4. Nghe điền từ (Dictation)</option>
-              <option value="fill_blank">5. Điền từ vào chỗ trống</option>
+              <option value="match">Nối từ (Ghép cặp Anh - Việt)</option>
+              <option value="quiz">Quiz trắc nghiệm phản xạ</option>
             </select>
           </div>
           <div>
@@ -471,7 +491,7 @@ Giải thích: Chuyển sang hiện tại hoàn thành."></textarea>
             <input type="text" id="inGameTitle" class="w-full border rounded-xl p-2.5 font-semibold" placeholder="Ví dụ: Ôn Tập Từ Vựng Unit 3">
           </div>
           <div>
-            <label class="block font-semibold mb-1">Dữ liệu trò chơi (Từ vựng hoặc câu hỏi):</label>
+            <label class="block font-semibold mb-1">Dữ liệu trò chơi (Mỗi dòng một cặp hoặc một câu):</label>
             <textarea id="inGameContent" rows="6" class="w-full border rounded-xl p-3 font-mono" placeholder="Sustainable = Bền vững&#10;Biodiversity = Đa dạng sinh học&#10;Innovation = Đổi mới sáng tạo"></textarea>
           </div>
           <button onclick="saveNewGameItem()" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold shadow">
@@ -505,7 +525,7 @@ Giải thích: Chuyển sang hiện tại hoàn thành."></textarea>
           <p class="text-xs text-slate-500">Tải lên video từ tệp máy tính hoặc link. Video sẽ hiển thị trực tiếp trong danh sách để xem ngay. Kích chuột phải để AI chấm bài có nhận xét lỗi chi tiết.</p>
         </div>
         <button onclick="openPostProjectModal()" class="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
-          <i data-lucide="upload-cloud" class="w-4 h-4"></i> Tải lên dự án (Tệp video/ảnh hoặc Link)
+          <i data-lucide="upload-cloud" class="w-4 h-4"></i> Tải lên dự án (Tệp video hoặc Link)
         </button>
       </div>
 
@@ -514,50 +534,93 @@ Giải thích: Chuyển sang hiện tại hoàn thành."></textarea>
 
   </main>
 
-  <!-- ==================== GIAO DIỆN PHÒNG THI TRỰC TUYẾN CHUẨN EDTECH ==================== -->
-  <div id="examWorkspaceModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-5 hidden">
-    <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[95vh] flex flex-col shadow-2xl overflow-hidden">
+  <!-- ==================== GIAO DIỆN LÀM BÀI TRỰC TUYẾN CHUẨN EDTECH (BÁM SÁT ẢNH 2 & 3) ==================== -->
+  <div id="examWorkspaceModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-6xl w-full h-[95vh] flex flex-col shadow-2xl overflow-hidden">
       
-      <!-- Header bài thi -->
-      <div class="px-6 py-4 bg-gradient-to-r from-blue-700 to-indigo-700 text-white flex items-center justify-between">
-        <div>
-          <h3 id="examWorkspaceTitle" class="font-bold text-base">Bài Tập Trực Tuyến</h3>
-          <p class="text-xs text-blue-100">Thang điểm mặc định: <strong class="text-amber-300">10.0 Điểm</strong></p>
+      <!-- THANH TRẠNG THÁI TRÊN CÙNG (ẢNH 2 & ẢNH 3) -->
+      <div class="px-6 py-3 bg-white border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+          <h3 id="examWorkspaceTitle" class="font-bold text-slate-900 text-sm sm:text-base">Luyện đề thi trực tuyến</h3>
+          <span class="text-xs text-slate-400">|</span>
+          <span id="examProgressCount" class="text-xs font-semibold text-slate-600">0% 0/20 câu</span>
         </div>
-        <button onclick="document.getElementById('examWorkspaceModal').classList.add('hidden')" class="text-white hover:text-blue-200"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
 
-      <!-- THANH DANH SÁCH SỐ THỨ TỰ CÂU HỎI (HỌC SINH BẤM VÀO SỐ ĐỂ CHỌN CÂU NÀO LÀM TRƯỚC) -->
-      <div class="px-6 py-3 bg-slate-100 border-b border-slate-200">
-        <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1.5">Mục lục câu hỏi (Bấm số để đến câu muốn làm):</span>
-        <div id="examNumberPalette" class="flex flex-wrap gap-1.5"></div>
-      </div>
-
-      <!-- VÙNG HIỂN THỊ CÁC CÂU HỎI (TRẮC NGHIỆM NÚT TRÒN HOẶC Ô TỰ LUẬN) -->
-      <div id="examQuestionsScrollContainer" class="p-6 overflow-y-auto space-y-6 flex-1 bg-slate-50"></div>
-
-      <!-- Khung kết quả chấm điểm (Hiện sau khi nộp) -->
-      <div id="examResultBox" class="p-4 bg-emerald-50 border-t border-emerald-200 hidden">
-        <div class="flex items-center justify-between">
-          <div>
-            <span class="text-xs text-emerald-700 font-bold uppercase">Kết quả bài làm:</span>
-            <div id="examResultScore" class="text-2xl font-extrabold text-emerald-900 mt-0.5">10.0 / 10</div>
+        <div class="flex items-center gap-3">
+          <!-- Đồng hồ đếm ngược (Ảnh 2) -->
+          <div class="flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg border">
+            <i data-lucide="clock" class="w-4 h-4 text-blue-600"></i>
+            <span id="examCountdownNumber">49:44</span>
           </div>
-          <span class="text-xs font-semibold text-emerald-800 bg-emerald-200/60 px-3 py-1 rounded-full">Đã tự động lưu vào mục Quản lý học sinh</span>
-        </div>
-      </div>
 
-      <!-- HÀNG NÚT ĐIỀU KHIỂN: NỘP BÀI, LÀM LẠI, ĐÓNG -->
-      <div class="px-6 py-4 bg-white border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
-        <button onclick="document.getElementById('examWorkspaceModal').classList.add('hidden')" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Đóng</button>
-        <div class="flex items-center gap-2">
-          <button id="btnExamReset" onclick="resetExamWorkspace()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Làm lại
-          </button>
-          <button id="btnExamSubmit" onclick="submitExamWorkspace()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+          <!-- Nút kích cỡ chữ A-, A, A+ (Ảnh 2 & 3) -->
+          <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border text-xs font-bold">
+            <button onclick="changeFontSize(-1)" class="px-2 py-1 hover:bg-white rounded">A-</button>
+            <button onclick="changeFontSize(0)" class="px-2 py-1 bg-blue-600 text-white rounded">A</button>
+            <button onclick="changeFontSize(1)" class="px-2 py-1 hover:bg-white rounded">A+</button>
+          </div>
+
+          <!-- Nút nộp bài (Ảnh 2 & 3) -->
+          <button id="btnExamSubmit" onclick="submitExamWorkspace()" class="px-5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition flex items-center gap-1.5">
             <i data-lucide="send" class="w-3.5 h-3.5"></i> Nộp bài
           </button>
+          <button onclick="document.getElementById('examWorkspaceModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
+      </div>
+
+      <!-- NỘI DUNG CHÍNH CHIA 2 CỘT (CỘT TRÁI: DANH SÁCH SỐ CÂU - CỘT PHẢI: BÀI ĐỌC & CÂU HỎI) -->
+      <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-50">
+        
+        <!-- CỘT TRÁI: THÔNG TIN HỌC SINH & DANH SÁCH CÂU HỎI DẠNG NÚT TRÒN (BÁM SÁT ẢNH 2 & 3) -->
+        <div class="w-full md:w-64 bg-white border-r border-slate-200 p-4 overflow-y-auto space-y-4 shrink-0">
+          <div class="border-b pb-3">
+            <span class="text-xs text-slate-500">Tên học sinh:</span>
+            <div class="flex items-center justify-between">
+              <h4 id="examStudentName" class="font-extrabold text-slate-900 text-sm">Lê Bảo Ngọc</h4>
+              <button onclick="renameStudentInExam()" class="text-xs text-blue-600 font-semibold hover:underline">[Đổi tên]</button>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-xs font-bold text-slate-700 block mb-2">Danh sách câu hỏi</span>
+            <!-- LƯỚI SỐ THỨ TỰ CÂU HỎI TRÒN (ẢNH 2 & 3) -->
+            <div id="examNumberPalette" class="grid grid-cols-5 gap-2"></div>
+          </div>
+
+          <div class="pt-3 border-t text-[11px] text-slate-500 space-y-1">
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full border border-slate-300"></span> Chưa làm</div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-blue-600"></span> Đã làm</div>
+          </div>
+        </div>
+
+        <!-- CỘT PHẢI: ĐOẠN VĂN BÀI ĐỌC PHÍA TRÊN & CÁC CÂU HỎI TRẮC NGHIỆM PHÍA DƯỚI (ẢNH 2 & 3) -->
+        <div id="examScrollArea" class="flex-1 overflow-y-auto p-6 space-y-6">
+          
+          <!-- KHUNG BÀI ĐỌC (HIỂN THỊ PHÍA TRÊN NẾU CÓ - ẢNH 2) -->
+          <div id="examPassageContainer" class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm text-xs leading-relaxed text-slate-800 space-y-2 hidden"></div>
+
+          <!-- FILE NGHE AUDIO (NẾU CÓ) -->
+          <div id="examAudioContainer" class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm hidden">
+            <span class="text-xs font-bold text-purple-800 block mb-1">Bài nghe (Listening Audio):</span>
+            <audio id="examAudioPlayer" controls class="w-full"></audio>
+          </div>
+
+          <!-- DANH SÁCH CÁC CÂU HỎI VỚI 4 NÚT TRÒN A, B, C, D (ẢNH 2 & 3) -->
+          <div id="examQuestionsContainer" class="space-y-6"></div>
+
+          <!-- KHUNG KẾT QUẢ VÀ LỜI GIẢI CHI TIẾT (HIỆN SAU KHI NỘP) -->
+          <div id="examResultBox" class="p-5 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-2 hidden">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-emerald-900 text-lg" id="examScoreText">Kết quả: 10.0 / 10 Điểm</span>
+              <button onclick="resetExamWorkspace()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Làm lại bài
+              </button>
+            </div>
+            <p class="text-xs text-emerald-800">Kết quả đã được tự động cập nhật vào bảng Quản lý học sinh của cô giáo.</p>
+          </div>
+
+        </div>
+
       </div>
 
     </div>
@@ -662,7 +725,7 @@ Giải thích: Chuyển sang hiện tại hoàn thành."></textarea>
     </div>
   </div>
 
-  <!-- MODAL: ĐĂNG DỰ ÁN HỌC TẬP (LƯU QUA INDEXEDDB AN TOÀN TUYỆT ĐỐI) -->
+  <!-- MODAL: ĐĂNG DỰ ÁN HỌC TẬP (LƯU QUA INDEXEDDB AN TOÀN) -->
   <div id="postProjectModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-3">
@@ -679,7 +742,7 @@ Giải thích: Chuyển sang hiện tại hoàn thành."></textarea>
           <input type="text" id="inProjTitle" class="w-full border rounded-xl p-2.5" placeholder="Ví dụ: Video Thuyết Trình Văn Hóa Kon Tum">
         </div>
         <div>
-          <label class="block font-semibold mb-1">Đính kèm tệp video / ảnh từ máy tính (Hỗ trợ video dung lượng lớn):</label>
+          <label class="block font-semibold mb-1">Đính kèm tệp video / ảnh từ máy tính:</label>
           <input type="file" id="inProjFileInput" accept="video/*,image/*" class="w-full border rounded-xl p-2 bg-slate-50 text-slate-500">
         </div>
         <div>
@@ -779,12 +842,12 @@ Giải thích: Chuyển sang hiện tại hoàn thành."></textarea>
 
   <!-- SCRIPT LOGIC ĐIỀU HÀNH -->
   <script>
-    // INDEXEDDB ĐỂ LƯU VIDEO DUNG LƯỢNG LỚN (KHÔNG BỊ LỖI QUOTA EXCEEDED)
+    // INDEXEDDB LƯU FILE MEDIA DUNG LƯỢNG LỚN
     const IDB = {
       db: null,
       init() {
         return new Promise((resolve) => {
-          const req = indexedDB.open('EngVentureMediaDB', 1);
+          const req = indexedDB.open('EngVentureMediaDB_v2', 1);
           req.onupgradeneeded = (e) => {
             const db = e.target.result;
             if (!db.objectStoreNames.contains('media')) {
@@ -850,40 +913,16 @@ Giải thích: Chuyển sang hiện tại hoàn thành."></textarea>
           osc.start(now + i * 0.1);
           osc.stop(now + i * 0.1 + 0.3);
         });
-      },
-      playAlarm() {
-        this.init();
-        const now = this.ctx.currentTime;
-        for (let i = 0; i < 4; i++) {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.frequency.setValueAtTime(880, now + i * 0.25);
-          gain.gain.setValueAtTime(0.3, now + i * 0.25);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.25 + 0.2);
-          osc.start(now + i * 0.25);
-          osc.stop(now + i * 0.25 + 0.2);
-        }
       }
     };
 
-    function speakText(text) {
-      if ('speechSynthesis' in window) {
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'en-US';
-        u.rate = 0.9;
-        window.speechSynthesis.speak(u);
-      }
-    }
-
-    // DỮ LIỆU CỐT LÕI
-    const STORAGE_KEY = 'engVenture_lemai_nguyenhue_master_v11';
+    // DỮ LIỆU CỐT LÕI (BÁM SÁT ẢNH 2 & 3)
+    const STORAGE_KEY = 'engVenture_lemai_nguyenhue_master_v12';
     const initialData = {
       classes: ['12A1', '12C1', '11A1', '11C1', '10A1'],
       currentClass: '12A1',
       students: [
-        { id: 1, name: 'Nguyễn Hoàng Kim Yến', class: '12A1', submissions: 6, avg: 8.8, note: 'Tư duy đọc hiểu rất tốt!' },
+        { id: 1, name: 'Lê Bảo Ngọc', class: '12A1', submissions: 6, avg: 8.8, note: 'Tư duy đọc hiểu rất tốt!' },
         { id: 2, name: 'Trần Văn Nam', class: '12A1', submissions: 4, avg: 7.5, note: 'Cần chú ý thêm cấu trúc câu viết lại.' },
         { id: 3, name: 'Lê Bảo Châu', class: '12A1', submissions: 5, avg: 8.2, note: 'Từ vựng phong phú, làm bài cẩn thận.' },
         { id: 4, name: 'Phạm Quỳnh Như', class: '12C1', submissions: 6, avg: 9.0, note: 'Xuất sắc! Có tố chất đội tuyển HSG.' },
@@ -892,85 +931,44 @@ Giải thích: Chuyển sang hiện tại hoàn thành."></textarea>
       topicsData: {
         'sgk_10_exercise': [{
           id: 'it_1',
-          title: 'Bài Tập Vận Dụng Unit 1 (SGK Lớp 10)',
-          rawContent: `Câu 1: In my family, my father is the ______.
-*A. breadwinner
-B. homemaker
-C. heavy lifting
-D. childcare
-Giải thích: Breadwinner nghĩa là trụ cột gia đình.
-
-Câu 2: She was delighted ______ her test results.
-A. with
-*B. by
-C. for
-D. to
-Giải thích: Delighted by/with something.
-
-Câu 3: The last time I saw her was two years ago.
--> I haven't ______
-*Đáp án: seen her for two years
-Giải thích: Chuyển sang hiện tại hoàn thành.`
-        }],
-        'hsg_11_exercise': [{
-          id: 'it_2',
-          title: 'Chuyên Đề Đảo Ngữ HSG Lớp 11',
-          rawContent: `Câu 1: Not only ______ the test, but she also scored high.
-*A. did she pass
-B. she passed
-C. does she pass
-D. she has passed
-Giải thích: Đảo ngữ thì quá khứ đơn với Not only.`
-        }],
-        'grad_grad_exercise': [{
-          id: 'it_3',
-          title: 'Đề Thi Thử Tốt Nghiệp THPT 2026 Số 1',
-          rawContent: `Câu 1: English is spoken ______ the world.
-*A. around
+          title: 'Luyện đề 14 - Reading Comprehension & Vocabulary',
+          passage: `Are you a solo traveler seeking to explore new places while immersing yourself (1) ________ local culture? Join the Global Hospitality Hub, a service (2) ________ travelers with friendly locals excited to show you hidden gems and must-visit spots.
+@ Why Choose Us?
+✓We aim to provide you with (3) ________.
+✓The tours are led by passionate locals, offering unique insights.
+✓You can freely explore without worrying about (4) ________.
+✓You can meet like-minded explorers and (5) ________ lifelong friends.
+Don't miss out! Sign up today (6) ________ the world in a safe, comfortable, and enriching way.`,
+          rawContent: `Question 1.
+A. off
 B. on
-C. at
-D. in
-Giải thích: Cụm around the world là trên toàn thế giới.`
+*C. in
+D. out
+Giải thích: Cụm từ cố định: immerse oneself in something (hòa mình vào điều gì).
+
+Question 2. Due to the sudden economic downturn, the company had to ________ its plan to expand into the European market.
+A. shelf
+*B. fall back on
+C. pull through
+D. scrap
+Giải thích: Fall back on nghĩa là phải dùng đến phương án dự phòng.
+
+Question 3. It took him a long time to ________ the disappointment of failing the entrance exam to the conservatory.
+*A. get over
+B. get through to
+C. get round to
+D. get away with
+Giải thích: Get over nghĩa là vượt qua cú sốc/nỗi buồn.`
         }]
       },
-      videoData: {
-        'sgk_10': [{ id: 'v_1', title: 'Unit 1: Family Life (Cô Lê Mai Giảng)', url: 'https://www.youtube.com/embed/sample1', hasLocalFile: false }],
-        'hsg_11': [{ id: 'v_2', title: 'Chuyên Đề Đảo Ngữ Nâng Cao', url: 'https://www.youtube.com/embed/sample2', hasLocalFile: false }],
-        'grad_grad': [{ id: 'v_3', title: 'Phương Pháp Giải Nhanh Đọc Hiểu 2026', url: 'https://www.youtube.com/embed/sample3', hasLocalFile: false }]
-      },
+      videoData: {},
       gamesData: {
         'sgk': [
-          { id: 'g_1', type: 'match', title: 'Nối từ Unit 1: Family Life', content: 'Homemaker = Người nội trợ\nBreadwinner = Trụ cột gia đình\nHeavy lifting = Công việc nặng nhọc' }
-        ],
-        'hsg': [
-          { id: 'g_2', type: 'quiz', title: 'Quiz Collocations C1', content: 'Take something for granted = Coi điều gì là hiển nhiên' }
-        ],
-        'grad': [
-          { id: 'g_3', type: 'fill_blank', title: 'Điền từ khuyết Đề thi 2026', content: 'Solar and wind are ______ (renew) sources. = renewable' }
+          { id: 'g_1', type: 'match', title: 'Ghép Cặp Từ Vựng Unit 1', content: 'Homemaker = Người nội trợ\nBreadwinner = Trụ cột gia đình\nHeavy lifting = Việc nặng nhọc' }
         ]
       },
-      assignedData: [
-        {
-          id: 'asg_101',
-          topicKey: 'sgk_10_exercise',
-          title: 'Bài Tập Vận Dụng Unit 1 (SGK Lớp 10)',
-          targetClass: '10A1',
-          deadline: '2026-11-05',
-          completedStudents: [
-            { name: 'Nguyễn Hoàng Kim Yến', score: '10.0 / 10', date: '31/10/2026', note: 'Làm bài hoàn hảo!' }
-          ]
-        }
-      ],
-      projects: [
-        {
-          id: 'proj_1',
-          author: 'Nguyễn Hoàng Kim Yến (12A1)',
-          title: 'Video Thuyết Trình: Cồng Chiêng Tây Nguyên',
-          url: 'https://www.youtube.com/embed/sample-culture',
-          hasLocalMedia: false,
-          desc: 'Giới thiệu nét đẹp không gian văn hóa cồng chiêng Kon Tum bằng tiếng Anh.'
-        }
-      ]
+      assignedData: [],
+      projects: []
     };
 
     let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || initialData;
@@ -980,6 +978,8 @@ Giải thích: Cụm around the world là trên toàn thế giới.`
     let currentTopicTitle = 'Bài Tập';
     let contextItem = null;
     let parsedQuestionsList = [];
+    let examTimerInterval = null;
+    let examTimeRemaining = 49 * 60 + 44; // 49:44 như ảnh 2
 
     function syncDB() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
@@ -1009,7 +1009,7 @@ Giải thích: Cụm around the world là trên toàn thế giới.`
       if (activeB) activeB.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-blue-50 text-blue-700 flex items-center gap-2 shrink-0';
     }
 
-    // ĐIỀU HƯỚNG CÂY THƯ MỤC
+    // ĐIỀU HƯỚNG CẤP THƯ MỤC
     function enterGradeFolder(domain, grade) {
       currentDomain = domain;
       currentGrade = grade;
@@ -1064,7 +1064,7 @@ Giải thích: Cụm around the world là trên toàn thế giới.`
       else document.getElementById('panel-graduation').classList.remove('hidden');
     }
 
-    // 3 TAB QUẢN TRỊ MỤC BÀI HỌC
+    // 3 TAB QUẢN TRỊ BÊN TRONG MỖI MỤC NHỎ
     function switchTopicTab(tab) {
       ['list', 'create', 'assigned'].forEach(t => {
         document.getElementById(`topView-${t}`).classList.add('hidden');
@@ -1123,29 +1123,41 @@ Giải thích: Cụm around the world là trên toàn thế giới.`
       lucide.createIcons();
     }
 
-    function insertSampleExercise() {
-      document.getElementById('inTopicNewContent').value = `Câu 1: In my family, my father is the ______.
-*A. breadwinner
-B. homemaker
-C. heavy lifting
-D. childcare
-Giải thích: Breadwinner nghĩa là trụ cột gia đình.
+    function insertSampleReadingExercise() {
+      document.getElementById('inTopicNewTitle').value = 'Luyện đề 14 - Reading Comprehension & Vocabulary';
+      document.getElementById('inTopicPassage').value = `Are you a solo traveler seeking to explore new places while immersing yourself (1) ________ local culture? Join the Global Hospitality Hub, a service (2) ________ travelers with friendly locals excited to show you hidden gems and must-visit spots.
+@ Why Choose Us?
+✓We aim to provide you with (3) ________.
+✓The tours are led by passionate locals, offering unique insights.
+✓You can freely explore without worrying about (4) ________.
+✓You can meet like-minded explorers and (5) ________ lifelong friends.
+Don't miss out! Sign up today (6) ________ the world in a safe, comfortable, and enriching way.`;
 
-Câu 2: She was delighted ______ her test results.
-A. with
-*B. by
-C. for
-D. to
-Giải thích: Delighted by/with something.
+      document.getElementById('inTopicNewContent').value = `Question 1.
+A. off
+B. on
+*C. in
+D. out
+Giải thích: Cụm từ cố định: immerse oneself in something (hòa mình vào điều gì).
 
-Câu 3: The last time I saw her was two years ago.
--> I haven't ______
-*Đáp án: seen her for two years
-Giải thích: Chuyển sang hiện tại hoàn thành.`;
+Question 2. Due to the sudden economic downturn, the company had to ________ its plan to expand into the European market.
+A. shelf
+*B. fall back on
+C. pull through
+D. scrap
+Giải thích: Fall back on nghĩa là dùng đến phương án dự phòng.
+
+Question 3. It took him a long time to ________ the disappointment of failing the entrance exam to the conservatory.
+*A. get over
+B. get through to
+C. get round to
+D. get away with
+Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
     }
 
     function saveNewTopicItem() {
       const title = document.getElementById('inTopicNewTitle').value.trim();
+      const passage = document.getElementById('inTopicPassage').value.trim();
       const content = document.getElementById('inTopicNewContent').value.trim();
 
       if (!title || !content) return alert('Vui lòng nhập tiêu đề và nội dung câu hỏi!');
@@ -1153,6 +1165,7 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
       const newItem = {
         id: 'it_' + Date.now(),
         title: title,
+        passage: passage,
         rawContent: content
       };
 
@@ -1161,116 +1174,25 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
       syncDB();
 
       document.getElementById('inTopicNewTitle').value = '';
+      document.getElementById('inTopicPassage').value = '';
       document.getElementById('inTopicNewContent').value = '';
-      alert(`Đã lưu bài "${title}"! Bài tập đã được chuyển sang chế độ trực tuyến trong Danh Sách Bài.`);
+      alert(`Đã lưu bài "${title}"! Bài tập đã chuyển sang chế độ trực tuyến trong Danh Sách Bài.`);
       switchTopicTab('list');
     }
 
-    // GIAO BÀI
-    function openQuickAssignModal(id, title) {
-      document.getElementById('inAssignItemTitle').value = title;
-      const sel = document.getElementById('selectAssignClass');
-      sel.innerHTML = '';
-      db.classes.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c;
-        opt.innerText = `Lớp ${c}`;
-        sel.appendChild(opt);
-      });
-      document.getElementById('quickAssignModal').classList.remove('hidden');
-    }
-
-    function confirmQuickAssignAction() {
-      const title = document.getElementById('inAssignItemTitle').value;
-      const targetClass = document.getElementById('selectAssignClass').value;
-      const deadline = document.getElementById('inAssignDeadline').value;
-
-      const newAsg = {
-        id: 'asg_' + Date.now(),
-        topicKey: currentTopicKey,
-        title: title,
-        targetClass: targetClass,
-        deadline: deadline,
-        completedStudents: [
-          { name: 'Nguyễn Hoàng Kim Yến', score: '9.8 / 10', date: '31/10/2026', note: 'Làm bài xuất sắc!' },
-          { name: 'Trần Văn Nam', score: '8.0 / 10', date: '31/10/2026', note: 'Cần chú ý thêm câu 2' }
-        ]
-      };
-
-      db.assignedData.push(newAsg);
-      syncDB();
-      document.getElementById('quickAssignModal').classList.add('hidden');
-      alert(`Đã giao bài "${title}" cho lớp ${targetClass}! Bài hiện đã nằm trong mục "Bài đã giao".`);
-      switchTopicTab('assigned');
-    }
-
-    function renderTopicAssigned() {
-      const container = document.getElementById('topicAssignedContainer');
-      container.innerHTML = '';
-      const list = db.assignedData.filter(a => a.topicKey === currentTopicKey);
-
-      if (!list.length) {
-        container.innerHTML = `<div class="p-8 text-center text-slate-400 text-xs">Chưa có bài nào được giao trong mục này.</div>`;
-        return;
-      }
-
-      list.forEach(a => {
-        const div = document.createElement('div');
-        div.className = 'p-4 rounded-2xl border border-emerald-200 bg-emerald-50/50 flex items-center justify-between hover:bg-emerald-50 transition cursor-pointer';
-        div.onclick = () => viewAssignedTaskDetails(a.id);
-        div.innerHTML = `
-          <div>
-            <h5 class="font-bold text-slate-900 text-sm">${a.title}</h5>
-            <span class="text-xs text-emerald-800 font-semibold">Giao lớp: ${a.targetClass} | Hạn: ${a.deadline}</span>
-          </div>
-          <span class="px-3 py-1 bg-emerald-600 text-white rounded-xl text-xs font-bold">Xem kết quả học sinh &rarr;</span>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function viewAssignedTaskDetails(asgId) {
-      const task = db.assignedData.find(x => x.id === asgId);
-      if (!task) return;
-
-      document.getElementById('assignedDetailTitle').innerText = task.title;
-      document.getElementById('assignedDetailSub').innerText = `Lớp ${task.targetClass} | Hạn nộp: ${task.deadline}`;
-      const container = document.getElementById('assignedStudentsList');
-      container.innerHTML = '';
-
-      task.completedStudents.forEach(st => {
-        const row = document.createElement('div');
-        row.className = 'p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs';
-        row.innerHTML = `
-          <div>
-            <span class="font-bold text-slate-900">${st.name}</span>
-            <p class="text-slate-500 text-[11px]">Nộp ngày: ${st.date}</p>
-            <p class="text-emerald-700 italic font-semibold">Nhận xét: "${st.note}"</p>
-          </div>
-          <span class="text-base font-extrabold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">${st.score}</span>
-        `;
-        container.appendChild(row);
-      });
-
-      document.getElementById('assignedDetailModal').classList.remove('hidden');
-    }
-
     // =========================================================================
-    // BỘ BÓC TÁCH CÂU HỎI TRỰC TUYẾN CHUẨN (NÚT SỐ CÂU HỎI, TRẮC NGHIỆM NÚT TRÒN, TỰ LUẬN Ô ĐIỀN)
+    // GIAO DIỆN PHÒNG THI TRỰC TUYẾN CHUẨN EDTECH (BÁM SÁT ẢNH 2 & 3)
     // =========================================================================
     function parseQuestionsFromRawText(raw) {
-      const blocks = raw.split(/Câu\s*\d+[:\.]/i).filter(b => b.trim());
+      const blocks = raw.split(/(?:Question|Câu)\s*\d+[:\.]/i).filter(b => b.trim());
       const questions = [];
 
       blocks.forEach((b, idx) => {
         const lines = b.trim().split('\n').map(l => l.trim()).filter(l => l);
         let qText = lines[0] || '';
-        let hint = '';
         const options = [];
         let correctOpt = '';
         let exp = 'Đáp án chuẩn theo bài học.';
-        let isEssay = false;
-        let essayAnswer = '';
 
         for (let i = 1; i < lines.length; i++) {
           const l = lines[i];
@@ -1279,29 +1201,17 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
             const cleanOpt = l.replace(/^\*/, '').trim();
             const optLetter = cleanOpt.charAt(0).toUpperCase();
             if (isCorr) correctOpt = optLetter;
-            options.push({ letter: optLetter, text: cleanOpt });
-          } else if (l.toLowerCase().includes('->') || l.toLowerCase().includes('gợi ý:')) {
-            hint = l.replace(/^->/i, '').replace(/gợi ý:/i, '').trim();
-          } else if (l.toLowerCase().includes('*đáp án:') || l.toLowerCase().includes('đáp án:')) {
-            isEssay = true;
-            essayAnswer = l.split(/đáp án:/i)[1].trim();
+            options.push({ letter: optLetter, text: cleanOpt.replace(/^[A-D][\.\:\)]\s*/i, '') });
           } else if (l.toLowerCase().includes('giải thích:')) {
             exp = l.split(/giải thích:/i)[1].trim();
           }
         }
 
-        if (options.length === 0) {
-          isEssay = true;
-        }
-
         questions.push({
           num: idx + 1,
           question: qText,
-          hint: hint,
-          isEssay: isEssay,
           options: options,
           correctOpt: correctOpt || 'A',
-          essayAnswer: essayAnswer,
           explanation: exp,
           userAnswer: ''
         });
@@ -1319,73 +1229,71 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
       document.getElementById('examResultBox').classList.add('hidden');
       document.getElementById('btnExamSubmit').classList.remove('hidden');
 
+      // HIỂN THỊ ĐOẠN VĂN BÀI ĐỌC PHÍA TRÊN NẾU CÓ (ẢNH 2)
+      const passBox = document.getElementById('examPassageContainer');
+      if (item.passage && item.passage.trim().length > 0) {
+        passBox.innerHTML = `<h5 class="font-bold text-slate-900 mb-1.5 uppercase text-xs">Reading Passage:</h5><p class="whitespace-pre-wrap font-sans leading-relaxed">${item.passage}</p>`;
+        passBox.classList.remove('hidden');
+      } else {
+        passBox.classList.add('hidden');
+      }
+
       parsedQuestionsList = parseQuestionsFromRawText(item.rawContent);
       renderExamWorkspaceUI();
+      startExamTimer();
       document.getElementById('examWorkspaceModal').classList.remove('hidden');
     }
 
     function renderExamWorkspaceUI() {
-      // 1. THANH SỐ THỨ TỰ CÂU HỎI (BẤM ĐỂ CHỌN CÂU NÀO LÀM TRƯỚC)
+      // 1. THANH SỐ THỨ TỰ CÂU HỎI TRÒN CỘT TRÁI (ẢNH 2 & 3)
       const palette = document.getElementById('examNumberPalette');
       palette.innerHTML = '';
       parsedQuestionsList.forEach((q, idx) => {
         const btn = document.createElement('button');
-        const hasAnswered = q.userAnswer && q.userAnswer.trim().length > 0;
+        const hasAns = q.userAnswer && q.userAnswer.trim().length > 0;
         btn.id = `pal_btn_${idx}`;
-        btn.className = `w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center transition border ${
-          hasAnswered ? 'bg-emerald-600 text-white border-emerald-700' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
+        btn.className = `w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center transition border ${
+          hasAns ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-700 border-dashed border-slate-300 hover:border-blue-500'
         }`;
         btn.innerText = q.num;
         btn.onclick = () => scrollToQuestion(idx);
         palette.appendChild(btn);
       });
 
-      // 2. VÙNG HIỂN THỊ CÁC CÂU HỎI
-      const container = document.getElementById('examQuestionsScrollContainer');
+      // 2. VÙNG HIỂN THỊ CÂU HỎI VỚI CÁC HỘP PHƯƠNG ÁN NẰM NGANG CÓ NÚT TRÒN (ẢNH 2 & 3)
+      const container = document.getElementById('examQuestionsContainer');
       container.innerHTML = '';
 
       parsedQuestionsList.forEach((q, idx) => {
         const card = document.createElement('div');
         card.id = `q_card_${idx}`;
-        card.className = 'p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3';
+        card.className = 'p-6 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-4';
 
         let innerHTML = `
-          <div class="flex items-start gap-2.5">
-            <span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-lg text-xs font-extrabold shrink-0">Câu ${q.num}</span>
-            <p class="font-bold text-slate-900 text-sm leading-relaxed">${q.question}</p>
+          <div>
+            <h4 class="font-extrabold text-slate-900 text-sm leading-relaxed">
+              Question ${q.num}. ${q.question}
+            </h4>
           </div>
         `;
 
-        if (q.hint) {
-          innerHTML += `<div class="p-2.5 bg-blue-50/60 rounded-xl text-xs font-semibold text-blue-800 italic">${q.hint}</div>`;
-        }
+        // 4 NÚT TRÒN ĐẦU 4 PHƯƠNG ÁN NẰM TRONG HỘP BO TRÒN (BÁM SÁT ẢNH 2 & 3)
+        innerHTML += `
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-1">
+            ${q.options.map(opt => `
+              <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:border-blue-400 cursor-pointer transition select-none bg-white">
+                <input type="radio" name="rad_q_${idx}" value="${opt.letter}" ${q.userAnswer === opt.letter ? 'checked' : ''} onchange="updateUserAnswer(${idx}, '${opt.letter}')" class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+                <span class="text-xs font-bold text-slate-900">${opt.letter}.</span>
+                <span class="text-xs text-slate-700 font-medium">${opt.text}</span>
+              </label>
+            `).join('')}
+          </div>
+        `;
 
-        if (q.isEssay) {
-          // TỰ LUẬN: CÓ CHỖ TRỐNG ĐỂ HỌC SINH VIẾT ĐÁP ÁN VÀO
-          innerHTML += `
-            <div class="pt-2">
-              <label class="block text-xs font-bold text-slate-600 mb-1.5">Đáp án của em:</label>
-              <textarea id="ans_input_${idx}" rows="2" oninput="updateUserAnswer(${idx}, this.value)" class="w-full border-2 border-slate-200 focus:border-blue-500 rounded-xl p-3 text-xs font-semibold focus:outline-none" placeholder="Viết câu trả lời / điền đáp án của em vào đây...">${q.userAnswer || ''}</textarea>
-            </div>
-          `;
-        } else {
-          // TRẮC NGHIỆM: 4 NÚT TRÒN ĐẦU 4 PHƯƠNG ÁN ĐỂ HỌC SINH KÍCH CHỌN
-          innerHTML += `
-            <div class="space-y-2 pt-1">
-              ${q.options.map(opt => `
-                <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition select-none">
-                  <input type="radio" name="rad_q_${idx}" value="${opt.letter}" ${q.userAnswer === opt.letter ? 'checked' : ''} onchange="updateUserAnswer(${idx}, '${opt.letter}')" class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300">
-                  <span class="text-xs font-semibold text-slate-800">${opt.text}</span>
-                </label>
-              `).join('')}
-            </div>
-          `;
-        }
-
-        // Khung giải thích chi tiết (ẩn đi, hiện sau khi nộp)
+        // Lời giải thích chi tiết (hiện sau khi nộp)
         innerHTML += `
           <div id="exp_box_${idx}" class="hidden p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs space-y-1">
-            <span class="font-bold text-emerald-800 block uppercase">Lời giải chi tiết:</span>
+            <span class="font-bold text-emerald-800 block uppercase">Lời giải:</span>
             <p class="text-emerald-950 font-medium">${q.explanation}</p>
           </div>
         `;
@@ -1393,75 +1301,100 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
         card.innerHTML = innerHTML;
         container.appendChild(card);
       });
+
+      updateExamProgress();
     }
 
     function scrollToQuestion(idx) {
       const el = document.getElementById(`q_card_${idx}`);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function updateUserAnswer(idx, val) {
       parsedQuestionsList[idx].userAnswer = val;
       const palBtn = document.getElementById(`pal_btn_${idx}`);
       if (palBtn) {
-        if (val && val.trim().length > 0) {
-          palBtn.className = 'w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center transition border bg-emerald-600 text-white border-emerald-700';
-        } else {
-          palBtn.className = 'w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center transition border bg-white text-slate-700 border-slate-300 hover:bg-slate-100';
-        }
+        palBtn.className = 'w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center transition border bg-blue-600 text-white border-blue-600';
+      }
+      updateExamProgress();
+    }
+
+    function updateExamProgress() {
+      const answered = parsedQuestionsList.filter(q => q.userAnswer && q.userAnswer.length > 0).length;
+      const total = parsedQuestionsList.length;
+      const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
+      document.getElementById('examProgressCount').innerText = `${pct}% ${answered}/${total} câu`;
+    }
+
+    function changeFontSize(delta) {
+      const scrollArea = document.getElementById('examScrollArea');
+      if (delta === -1) scrollArea.style.fontSize = '12px';
+      else if (delta === 1) scrollArea.style.fontSize = '16px';
+      else scrollArea.style.fontSize = '14px';
+    }
+
+    function renameStudentInExam() {
+      const newName = prompt('Nhập họ tên của em:', document.getElementById('examStudentName').innerText);
+      if (newName && newName.trim()) {
+        document.getElementById('examStudentName').innerText = newName.trim();
       }
     }
 
-    // NỘP BÀI: TỰ ĐỘNG CHẤM THEO THANG ĐIỂM 10.0 MẶC ĐỊNH
+    function startExamTimer() {
+      if (examTimerInterval) clearInterval(examTimerInterval);
+      examTimeRemaining = 49 * 60 + 44;
+      examTimerInterval = setInterval(() => {
+        if (examTimeRemaining > 0) {
+          examTimeRemaining--;
+          const m = Math.floor(examTimeRemaining / 60).toString().padStart(2, '0');
+          const s = (examTimeRemaining % 60).toString().padStart(2, '0');
+          document.getElementById('examCountdownNumber').innerText = `${m}:${s}`;
+        } else {
+          clearInterval(examTimerInterval);
+          submitExamWorkspace();
+        }
+      }, 1000);
+    }
+
+    // NỘP BÀI: TỰ ĐỘNG CHẤM & GHI NHẬN VÀO QUẢN LÝ LỚP
     function submitExamWorkspace() {
+      if (examTimerInterval) clearInterval(examTimerInterval);
+
       let correctCount = 0;
       const total = parsedQuestionsList.length;
 
       parsedQuestionsList.forEach((q, idx) => {
-        let isCorrect = false;
-        if (q.isEssay) {
-          const userAnsClean = (q.userAnswer || '').toLowerCase().replace(/[\.\,\s]/g, '');
-          const correctAnsClean = (q.essayAnswer || '').toLowerCase().replace(/[\.\,\s]/g, '');
-          if (userAnsClean && (userAnsClean === correctAnsClean || correctAnsClean.includes(userAnsClean))) {
-            isCorrect = true;
-          }
-        } else {
-          if (q.userAnswer && q.userAnswer.toUpperCase() === q.correctOpt.toUpperCase()) {
-            isCorrect = true;
-          }
+        if (q.userAnswer && q.userAnswer.toUpperCase() === q.correctOpt.toUpperCase()) {
+          correctCount++;
         }
-
-        if (isCorrect) correctCount++;
-
-        // Hiện lời giải chi tiết cho từng câu
         const expBox = document.getElementById(`exp_box_${idx}`);
         if (expBox) expBox.classList.remove('hidden');
       });
 
-      // MẶC ĐỊNH THANG ĐIỂM 10.0
       const finalScore = total > 0 ? (Math.round((correctCount / total) * 10 * 10) / 10).toFixed(1) : '10.0';
 
       AudioEngine.playWin();
-      document.getElementById('examResultScore').innerText = `${finalScore} / 10 Điểm (Đúng ${correctCount}/${total} câu)`;
+      document.getElementById('examScoreText').innerText = `Kết quả: ${finalScore} / 10 Điểm (Đúng ${correctCount}/${total} câu)`;
       document.getElementById('examResultBox').classList.remove('hidden');
       document.getElementById('btnExamSubmit').classList.add('hidden');
 
-      // TỰ ĐỘNG GHI NHẬN KẾT QUẢ VÀO MỤC QUẢN LÝ LỚP
-      const st = db.students[0];
+      // TỰ ĐỘNG GHI NHẬN KẾT QUẢ VÀO QUẢN LÝ HỌC SINH
+      const studentName = document.getElementById('examStudentName').innerText;
+      let st = db.students.find(s => s.name.toLowerCase() === studentName.toLowerCase()) || db.students[0];
       if (st) {
         st.submissions = (st.submissions || 0) + 1;
         st.avg = Math.round(((st.avg ? (st.avg + parseFloat(finalScore)) / 2 : parseFloat(finalScore))) * 10) / 10;
-        st.note = `Làm trực tuyến: Đạt ${finalScore}/10 điểm bài "${document.getElementById('examWorkspaceTitle').innerText}"`;
+        st.note = `Làm đề "${document.getElementById('examWorkspaceTitle').innerText}": Đạt ${finalScore}/10 điểm`;
         syncDB();
         renderStudentsList();
       }
 
-      alert(`Em đã nộp bài thành công!\nĐiểm số: ${finalScore}/10.\nLời giải chi tiết từng câu đã hiển thị bên dưới.`);
+      alert(`Em đã hoàn thành bài thi!\nĐiểm số: ${finalScore}/10.\nLời giải chi tiết từng câu đã hiển thị phía dưới.`);
       document.getElementById('examResultBox').scrollIntoView({ behavior: 'smooth' });
     }
 
     function resetExamWorkspace() {
-      if (confirm('Em có muốn làm lại bài tập này từ đầu không?')) {
+      if (confirm('Em có chắc chắn muốn làm lại bài tập này không?')) {
         parsedQuestionsList.forEach((q, idx) => {
           q.userAnswer = '';
           const expBox = document.getElementById(`exp_box_${idx}`);
@@ -1470,11 +1403,12 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
         document.getElementById('examResultBox').classList.add('hidden');
         document.getElementById('btnExamSubmit').classList.remove('hidden');
         renderExamWorkspaceUI();
+        startExamTimer();
       }
     }
 
     // =========================================================================
-    // MỤC GAME (DANH SÁCH GAME & TẠO MỚI GAME)
+    // MỤC GAME (THAO TÁC TRỰC TIẾP KHÔNG BỊ ĐƠ)
     // =========================================================================
     let currentGameDomain = 'sgk';
     function enterGameHub(domain) {
@@ -1553,6 +1487,7 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
       switchGameTab('list');
     }
 
+    let selectedLeftWord = null;
     function playSpecificGame(id) {
       const g = (db.gamesData[currentGameDomain] || []).find(x => x.id === id);
       if (!g) return;
@@ -1560,117 +1495,50 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
       const modal = document.getElementById('gamePlayModal');
       document.getElementById('gamePlayTitle').innerText = g.title;
       const body = document.getElementById('gamePlayBody');
+      selectedLeftWord = null;
 
-      if (g.type === 'match') {
-        body.innerHTML = `
-          <p class="text-xs text-slate-500">Bấm ghép các cặp tương ứng:</p>
-          <div class="grid grid-cols-2 gap-3 text-xs font-bold">
-            <button onclick="AudioEngine.playWin(); this.classList.add('bg-emerald-100','line-through');" class="p-3 bg-blue-50 border rounded-xl">Sustainable</button>
-            <button onclick="AudioEngine.playWin(); this.classList.add('bg-emerald-100','line-through');" class="p-3 bg-slate-50 border rounded-xl">Bền vững</button>
-            <button onclick="AudioEngine.playWin(); this.classList.add('bg-emerald-100','line-through');" class="p-3 bg-blue-50 border rounded-xl">Biodiversity</button>
-            <button onclick="AudioEngine.playWin(); this.classList.add('bg-emerald-100','line-through');" class="p-3 bg-slate-50 border rounded-xl">Đa dạng sinh học</button>
+      // Xử lý game ghép từ nối chữ mượt mà
+      const lines = g.content.split('\n').filter(l => l.includes('='));
+      const pairs = lines.map(l => {
+        const parts = l.split('=');
+        return { en: parts[0].trim(), vn: parts[1].trim() };
+      });
+
+      body.innerHTML = `
+        <p class="text-xs text-slate-500">Bấm chọn 1 từ tiếng Anh bên trái rồi chọn nghĩa tiếng Việt bên phải:</p>
+        <div class="grid grid-cols-2 gap-3 text-xs font-bold">
+          <div id="gameLeftList" class="space-y-2">
+            ${pairs.map(p => `
+              <button onclick="pickGameLeft(this, '${p.en}', '${p.vn}')" class="w-full text-left p-3 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition">${p.en}</button>
+            `).join('')}
           </div>
-        `;
-      } else {
-        body.innerHTML = `
-          <div class="p-4 bg-slate-50 rounded-2xl border text-xs space-y-3">
-            <p class="font-mono">${g.content}</p>
-            <button onclick="AudioEngine.playWin(); alert('Chúc mừng em đã hoàn thành!');" class="w-full py-2 bg-emerald-600 text-white rounded-xl font-bold">Hoàn thành thử thách</button>
+          <div id="gameRightList" class="space-y-2">
+            ${pairs.sort(() => Math.random() - 0.5).map(p => `
+              <button onclick="pickGameRight(this, '${p.vn}')" class="w-full text-left p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition">${p.vn}</button>
+            `).join('')}
           </div>
-        `;
-      }
+        </div>
+      `;
       modal.classList.remove('hidden');
     }
 
-    // =========================================================================
-    // VIDEO BÀI HỌC (TẢI LÊN FILE HOẶC LINK, CHỐNG TẢI VỀ)
-    // =========================================================================
-    function openVideoManager(domain, gradeKey) {
-      currentTopicKey = `${domain}_${gradeKey}`;
-      document.getElementById('lblVideoManagerTitle').innerText = `Kho Video Bài Học (${domain.toUpperCase()} - Khối ${gradeKey})`;
-      document.getElementById('panel-textbook').classList.add('hidden');
-      document.getElementById('panel-hsg').classList.add('hidden');
-      document.getElementById('panel-graduation').classList.add('hidden');
-      document.getElementById('panel-video-manager').classList.remove('hidden');
-      renderVideoLessons();
+    function pickGameLeft(btn, en, vn) {
+      document.querySelectorAll('#gameLeftList button').forEach(b => b.classList.remove('ring-2', 'ring-blue-600'));
+      btn.classList.add('ring-2', 'ring-blue-600');
+      selectedLeftWord = { btn, en, vn };
     }
 
-    function backFromVideoManager() {
-      document.getElementById('panel-video-manager').classList.add('hidden');
-      if (currentDomain === 'sgk') document.getElementById('panel-textbook').classList.remove('hidden');
-      else if (currentDomain === 'hsg') document.getElementById('panel-hsg').classList.remove('hidden');
-      else document.getElementById('panel-graduation').classList.remove('hidden');
-    }
-
-    function openUploadVideoModalDirect() {
-      document.getElementById('uploadVideoModalDirect').classList.remove('hidden');
-    }
-
-    async function saveNewDirectVideo() {
-      const title = document.getElementById('inDirectVideoTitle').value.trim();
-      const link = document.getElementById('inDirectVideoLink').value.trim();
-      const fileInput = document.getElementById('inDirectVideoFile');
-
-      if (!title) return alert('Vui lòng nhập tiêu đề video bài học!');
-
-      const file = fileInput.files[0];
-      const videoId = 'vid_' + Date.now();
-
-      if (file) {
-        await IDB.saveFile(videoId, file);
-        if (!db.videoData[currentTopicKey]) db.videoData[currentTopicKey] = [];
-        db.videoData[currentTopicKey].push({ id: videoId, title: title, url: null, hasLocalFile: true });
-        syncDB();
-        renderVideoLessons();
-        document.getElementById('uploadVideoModalDirect').classList.add('hidden');
-        alert('Đã tải lên video từ máy tính thành công!');
-      } else if (link) {
-        if (!db.videoData[currentTopicKey]) db.videoData[currentTopicKey] = [];
-        db.videoData[currentTopicKey].push({ id: videoId, title: title, url: link, hasLocalFile: false });
-        syncDB();
-        renderVideoLessons();
-        document.getElementById('uploadVideoModalDirect').classList.add('hidden');
-        alert('Đã lưu video từ link thành công!');
+    function pickGameRight(btn, vn) {
+      if (!selectedLeftWord) return alert('Hãy chọn 1 từ tiếng Anh bên trái trước!');
+      if (selectedLeftWord.vn === vn) {
+        AudioEngine.playWin();
+        selectedLeftWord.btn.classList.add('bg-emerald-100', 'border-emerald-300', 'line-through', 'opacity-50');
+        selectedLeftWord.btn.disabled = true;
+        btn.classList.add('bg-emerald-100', 'border-emerald-300', 'line-through', 'opacity-50');
+        btn.disabled = true;
+        selectedLeftWord = null;
       } else {
-        alert('Vui lòng chọn tệp video hoặc dán link!');
-      }
-    }
-
-    async function renderVideoLessons() {
-      const container = document.getElementById('videoLessonsContainer');
-      container.innerHTML = '';
-      const list = db.videoData[currentTopicKey] || [];
-
-      if (!list.length) {
-        container.innerHTML = `<div class="col-span-2 p-10 text-center text-slate-400 text-xs">Chưa có video nào. Cô bấm "+ Tải lên video" nhé!</div>`;
-        return;
-      }
-
-      for (let i = 0; i < list.length; i++) {
-        const v = list[i];
-        let videoSrc = v.url;
-        if (v.hasLocalFile) {
-          const blob = await IDB.getFile(v.id);
-          if (blob) videoSrc = URL.createObjectURL(blob);
-        }
-
-        const div = document.createElement('div');
-        div.className = 'p-4 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3';
-        div.innerHTML = `
-          <h4 class="font-bold text-sm text-slate-900">${i + 1}. ${v.title}</h4>
-          <div class="aspect-video bg-black rounded-xl overflow-hidden shadow">
-            ${v.hasLocalFile ? `
-              <video controls controlsList="nodownload" oncontextmenu="return false;" class="w-full h-full">
-                <source src="${videoSrc}">
-                Không hỗ trợ phát video.
-              </video>
-            ` : `
-              <iframe class="w-full h-full" src="${v.url}" title="Video player" frameborder="0" allowfullscreen></iframe>
-            `}
-          </div>
-          <p class="text-[11px] text-slate-500 italic">* Chế độ an toàn: Đã khóa tải về để bảo vệ bài giảng của cô giáo.</p>
-        `;
-        container.appendChild(div);
+        alert('Chưa chính xác! Thử lại nhé em.');
       }
     }
 
@@ -1754,7 +1622,6 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
 
       try {
         if (file) {
-          // LƯU TỆP THẬT VÀO INDEXEDDB - HOẠT ĐỘNG 100% VỚI VIDEO MP4
           await IDB.saveFile(projId, file);
           db.projects.push({
             id: projId,
@@ -1780,7 +1647,7 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
         document.getElementById('postProjectModal').classList.add('hidden');
         alert('Đã tải lên bài dự án thành công! Video đã hiển thị trực tiếp trong danh sách.');
       } catch (err) {
-        alert('Có lỗi xảy ra khi lưu tệp: ' + err);
+        alert('Lỗi khi tải tệp: ' + err);
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i data-lucide="upload" class="w-4 h-4"></i> Tải lên';
@@ -1795,7 +1662,7 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
       const aiScore = 9.5;
       const aiFeedback = `[Gemini AI Grader - Nhận xét chi tiết cho ${p.author}]:
 1. Điểm số: ${aiScore} / 10
-2. Ưu điểm: Phát âm lưu loát, kịch bản tiếng Anh mạch lạc, hình ảnh/video bám sát văn hóa địa phương Kon Tum.
+2. Ưu điểm: Kịch bản tiếng Anh mạch lạc, hình ảnh/video bám sát văn hóa địa phương Kon Tum.
 3. Nhận xét lỗi chi tiết: Cần chú ý thêm một số âm đuôi (ending sounds) như /s/, /ed/ ở các câu phức.
 4. Đánh giá chung: Hoàn thành xuất sắc nhiệm vụ học tập!`;
 
@@ -1809,7 +1676,7 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
         renderStudentsList();
       }
 
-      alert(`AI đã chấm bài thành công!\nĐiểm: ${aiScore}/10.\nKết quả và nhận xét chi tiết đã TỰ ĐỘNG LƯU vào mục Quản lý học sinh của em ${p.author}.`);
+      alert(`AI đã chấm bài thành công!\nĐiểm: ${aiScore}/10.\nKết quả và nhận xét lỗi chi tiết đã TỰ ĐỘNG LƯU vào hồ sơ Quản lý học sinh của em ${p.author}.`);
     }
 
     function executeAiGradingFromContext() {
@@ -1822,7 +1689,7 @@ Giải thích: Chuyển sang hiện tại hoàn thành.`;
       document.getElementById('customContextMenu').classList.add('hidden');
     }
 
-    // QUẢN LÝ LỚP HỌC
+    // QUẢN LÝ LỚP HỌC & VIDEO
     function renderClassSelects() {
       const sel = document.getElementById('selectedClassFilter');
       const wheelSel = document.getElementById('wheelClassSelect');
