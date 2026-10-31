@@ -10,9 +10,11 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .flashcard { perspective: 1000px; }
+    .flashcard-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+    .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+    .flashcard-front, .flashcard-back { backface-visibility: hidden; position: absolute; inset: 0; }
+    .flashcard-back { transform: rotateY(180deg); }
     video::-internal-media-controls-download-button { display:none; }
     video::-webkit-media-controls-enclosure { overflow:hidden; }
     video::-webkit-media-controls-panel { width: calc(100% + 30px); }
@@ -29,7 +31,7 @@
           <h1 class="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
             EngVenture <span class="text-xs bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">THPT Nguyễn Huệ</span>
           </h1>
-          <p class="text-xs text-slate-500">Cổng Dạy & Học Tiếng Anh Trực Tuyến Chuyên Nghiệp</p>
+          <p class="text-xs text-slate-500">Cổng Dạy & Học Tiếng Anh Trực Tuyến 4.0</p>
         </div>
       </div>
 
@@ -78,7 +80,7 @@
     </div>
   </section>
 
-  <!-- THANH ĐIỀU HƯỚNG CHÍNH (5 MỤC) -->
+  <!-- THANH ĐIỀU HƯỚNG CHÍNH -->
   <nav class="bg-white border-b border-slate-200 sticky top-[65px] z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto gap-2 py-2">
       <button onclick="switchMainTab('students')" id="tabBtn-students" class="px-4 py-2 rounded-xl text-sm font-bold bg-blue-50 text-blue-700 flex items-center gap-2 shrink-0">
@@ -143,7 +145,7 @@
               <thead class="bg-slate-50 text-slate-600 text-xs font-semibold uppercase sticky top-0">
                 <tr>
                   <th class="px-4 py-2.5">STT</th>
-                  <th class="px-4 py-2.5">Họ và Tên (Xem nhận xét)</th>
+                  <th class="px-4 py-2.5">Họ và Tên (Xem kết quả cá nhân)</th>
                   <th class="px-4 py-2.5">Số lần làm bài</th>
                   <th class="px-4 py-2.5">Điểm TB</th>
                   <th class="px-4 py-2.5 text-right">Xóa</th>
@@ -199,8 +201,8 @@
     <section id="panel-textbook" class="space-y-6 hidden">
       <div id="sgkLevel1" class="space-y-4">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 class="font-bold text-slate-900 text-base">Sách Giáo Khoa Tiếng Anh (Global Success)</h3>
-          <p class="text-xs text-slate-500">Bấm vào khối lớp bên dưới để mở toàn bộ các mục bài học</p>
+          <h3 class="font-bold text-slate-900 text-base">Sách Giáo Khoa (Global Success)</h3>
+          <p class="text-xs text-slate-500">Bấm vào khối lớp để vào bên trong xem các mục bài học</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div onclick="enterGradeFolder('sgk', 10)" class="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition cursor-pointer text-center space-y-3">
@@ -250,7 +252,7 @@
           <div onclick="enterGameHub('sgk')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-amber-500 hover:shadow-lg transition cursor-pointer text-center space-y-2">
             <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto"><i data-lucide="gamepad-2" class="w-6 h-6"></i></div>
             <h4 class="font-bold text-slate-900 text-sm">Game</h4>
-            <p class="text-[11px] text-slate-400">Trò chơi tương tác</p>
+            <p class="text-[11px] text-slate-400">Tạo & chơi nhiều thể loại</p>
           </div>
           <div onclick="enterTopic('exercise', 'sgk')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-lg transition cursor-pointer text-center space-y-2">
             <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto"><i data-lucide="check-square" class="w-6 h-6"></i></div>
@@ -397,12 +399,11 @@
             <input type="text" id="inTopicNewTitle" class="w-full border rounded-xl p-2.5 font-semibold text-slate-800" placeholder="Ví dụ: Luyện đề thi thử tốt nghiệp THPT - Đề số 14">
           </div>
 
-          <!-- MỤC ĐOẠN VĂN / ĐỀ BÀI CHUNG HIỂN THỊ PHÍA TRÊN (BÁM SÁT ẢNH 1 & ẢNH 2) -->
+          <!-- MỤC ĐOẠN VĂN / ĐỀ BÀI CHUNG HIỂN THỊ PHÍA TRÊN -->
           <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
             <label class="font-bold text-slate-800 block">Đoạn văn, bài đọc hoặc đề bài chung hiển thị phía trên các câu hỏi:</label>
-            <textarea id="inTopicPassage" rows="5" class="w-full border rounded-xl p-3 font-mono" placeholder="Dán đoạn văn bài đọc hiểu tại đây... (Ví dụ: Are you a solo traveler seeking to explore new places while immersing yourself (1) ______ local culture?...)"></textarea>
+            <textarea id="inTopicPassage" rows="5" class="w-full border rounded-xl p-3 font-mono" placeholder="Dán đoạn văn bài đọc hiểu tại đây..."></textarea>
 
-            <!-- CÁC NÚT ĐÍNH KÈM ĐA PHƯƠNG TIỆN (ẢNH 1) -->
             <div class="flex flex-wrap items-center gap-2">
               <label class="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl font-bold cursor-pointer flex items-center gap-1.5 text-slate-700">
                 <i data-lucide="image" class="w-4 h-4 text-blue-600"></i> Đính kèm hình ảnh
@@ -421,7 +422,7 @@
             </div>
           </div>
 
-          <!-- MỤC COPY - DÁN CÂU HỎI TRẮC NGHIỆM / TỰ LUẬN (ẢNH 1) -->
+          <!-- MỤC DÁN CÂU HỎI -->
           <div>
             <div class="flex items-center justify-between mb-1">
               <label class="font-bold text-slate-800">Danh sách câu hỏi (Dán từ Word vào đây):</label>
@@ -432,14 +433,7 @@ A. shelf
 *B. fall back on
 C. pull through
 D. scrap
-Giải thích: Fall back on nghĩa là dùng đến phương án dự phòng.
-
-Question 2. It took him a long time to ______ the disappointment.
-*A. get over
-B. get through to
-C. get round to
-D. get away with
-Giải thích: Get over nghĩa là vượt qua nỗi buồn."></textarea>
+Giải thích: Fall back on nghĩa là dùng đến phương án dự phòng."></textarea>
             <p class="text-[11px] text-slate-500 italic mt-1">* Hệ thống tự động nhận diện: Câu hỏi, các đáp án A/B/C/D, dấu * đáp án đúng và lời giải thích.</p>
           </div>
 
@@ -475,23 +469,28 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn."></textarea>
         <div id="gameListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       </div>
 
-      <!-- Tạo mới game -->
+      <!-- Tạo mới game (ĐỔI GIAO DIỆN NHẬP NỘI DUNG THEO TỪNG THỂ LOẠI GAME) -->
       <div id="gView-create" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 hidden">
         <h4 class="font-bold text-slate-900 text-sm">Tạo Trò Chơi Mới</h4>
         <div class="space-y-3 text-xs">
           <div>
             <label class="block font-semibold mb-1">Thể loại trò chơi:</label>
-            <select id="inGameType" class="w-full border rounded-xl p-2.5 bg-slate-50 font-bold text-amber-800">
-              <option value="match">Nối từ (Ghép cặp Anh - Việt)</option>
-              <option value="quiz">Quiz trắc nghiệm phản xạ</option>
+            <select id="inGameType" onchange="changeGameInputGuide()" class="w-full border rounded-xl p-2.5 bg-slate-50 font-bold text-amber-800">
+              <option value="match">1. Nối từ (Word Match: Cặp Anh = Việt)</option>
+              <option value="quiz">2. Quiz Trắc Nghiệm (Chọn A, B, C, D)</option>
+              <option value="listen_choose">3. Nghe chọn từ đúng (Listening Quiz)</option>
+              <option value="fill_blank">4. Điền từ vào chỗ trống</option>
             </select>
           </div>
           <div>
             <label class="block font-semibold mb-1">Tên trò chơi:</label>
-            <input type="text" id="inGameTitle" class="w-full border rounded-xl p-2.5 font-semibold" placeholder="Ví dụ: Ôn Tập Từ Vựng Unit 3">
+            <input type="text" id="inGameTitle" class="w-full border rounded-xl p-2.5 font-semibold" placeholder="Ví dụ: Thử Thách Trắc Nghiệm Phản Xạ Unit 1">
           </div>
           <div>
-            <label class="block font-semibold mb-1">Dữ liệu trò chơi (Mỗi dòng một cặp hoặc một câu):</label>
+            <div class="flex items-center justify-between mb-1">
+              <label id="lblGameInputGuide" class="font-semibold text-slate-700">Dữ liệu trò chơi (Mỗi dòng một cặp từ):</label>
+              <button onclick="insertSampleGameData()" class="text-blue-600 font-bold hover:underline">Chèn mẫu nhanh</button>
+            </div>
             <textarea id="inGameContent" rows="6" class="w-full border rounded-xl p-3 font-mono" placeholder="Sustainable = Bền vững&#10;Biodiversity = Đa dạng sinh học&#10;Innovation = Đổi mới sáng tạo"></textarea>
           </div>
           <button onclick="saveNewGameItem()" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold shadow">
@@ -533,125 +532,6 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn."></textarea>
     </section>
 
   </main>
-
-  <!-- ==================== GIAO DIỆN LÀM BÀI TRỰC TUYẾN CHUẨN EDTECH (BÁM SÁT ẢNH 2 & 3) ==================== -->
-  <div id="examWorkspaceModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-6xl w-full h-[95vh] flex flex-col shadow-2xl overflow-hidden">
-      
-      <!-- THANH TRẠNG THÁI TRÊN CÙNG (ẢNH 2 & ẢNH 3) -->
-      <div class="px-6 py-3 bg-white border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 shrink-0">
-        <div class="flex items-center gap-3">
-          <h3 id="examWorkspaceTitle" class="font-bold text-slate-900 text-sm sm:text-base">Luyện đề thi trực tuyến</h3>
-          <span class="text-xs text-slate-400">|</span>
-          <span id="examProgressCount" class="text-xs font-semibold text-slate-600">0% 0/20 câu</span>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <!-- Đồng hồ đếm ngược (Ảnh 2) -->
-          <div class="flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg border">
-            <i data-lucide="clock" class="w-4 h-4 text-blue-600"></i>
-            <span id="examCountdownNumber">49:44</span>
-          </div>
-
-          <!-- Nút kích cỡ chữ A-, A, A+ (Ảnh 2 & 3) -->
-          <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border text-xs font-bold">
-            <button onclick="changeFontSize(-1)" class="px-2 py-1 hover:bg-white rounded">A-</button>
-            <button onclick="changeFontSize(0)" class="px-2 py-1 bg-blue-600 text-white rounded">A</button>
-            <button onclick="changeFontSize(1)" class="px-2 py-1 hover:bg-white rounded">A+</button>
-          </div>
-
-          <!-- Nút nộp bài (Ảnh 2 & 3) -->
-          <button id="btnExamSubmit" onclick="submitExamWorkspace()" class="px-5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition flex items-center gap-1.5">
-            <i data-lucide="send" class="w-3.5 h-3.5"></i> Nộp bài
-          </button>
-          <button onclick="document.getElementById('examWorkspaceModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
-        </div>
-      </div>
-
-      <!-- NỘI DUNG CHÍNH CHIA 2 CỘT (CỘT TRÁI: DANH SÁCH SỐ CÂU - CỘT PHẢI: BÀI ĐỌC & CÂU HỎI) -->
-      <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-50">
-        
-        <!-- CỘT TRÁI: THÔNG TIN HỌC SINH & DANH SÁCH CÂU HỎI DẠNG NÚT TRÒN (BÁM SÁT ẢNH 2 & 3) -->
-        <div class="w-full md:w-64 bg-white border-r border-slate-200 p-4 overflow-y-auto space-y-4 shrink-0">
-          <div class="border-b pb-3">
-            <span class="text-xs text-slate-500">Tên học sinh:</span>
-            <div class="flex items-center justify-between">
-              <h4 id="examStudentName" class="font-extrabold text-slate-900 text-sm">Lê Bảo Ngọc</h4>
-              <button onclick="renameStudentInExam()" class="text-xs text-blue-600 font-semibold hover:underline">[Đổi tên]</button>
-            </div>
-          </div>
-
-          <div>
-            <span class="text-xs font-bold text-slate-700 block mb-2">Danh sách câu hỏi</span>
-            <!-- LƯỚI SỐ THỨ TỰ CÂU HỎI TRÒN (ẢNH 2 & 3) -->
-            <div id="examNumberPalette" class="grid grid-cols-5 gap-2"></div>
-          </div>
-
-          <div class="pt-3 border-t text-[11px] text-slate-500 space-y-1">
-            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full border border-slate-300"></span> Chưa làm</div>
-            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-blue-600"></span> Đã làm</div>
-          </div>
-        </div>
-
-        <!-- CỘT PHẢI: ĐOẠN VĂN BÀI ĐỌC PHÍA TRÊN & CÁC CÂU HỎI TRẮC NGHIỆM PHÍA DƯỚI (ẢNH 2 & 3) -->
-        <div id="examScrollArea" class="flex-1 overflow-y-auto p-6 space-y-6">
-          
-          <!-- KHUNG BÀI ĐỌC (HIỂN THỊ PHÍA TRÊN NẾU CÓ - ẢNH 2) -->
-          <div id="examPassageContainer" class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm text-xs leading-relaxed text-slate-800 space-y-2 hidden"></div>
-
-          <!-- FILE NGHE AUDIO (NẾU CÓ) -->
-          <div id="examAudioContainer" class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm hidden">
-            <span class="text-xs font-bold text-purple-800 block mb-1">Bài nghe (Listening Audio):</span>
-            <audio id="examAudioPlayer" controls class="w-full"></audio>
-          </div>
-
-          <!-- DANH SÁCH CÁC CÂU HỎI VỚI 4 NÚT TRÒN A, B, C, D (ẢNH 2 & 3) -->
-          <div id="examQuestionsContainer" class="space-y-6"></div>
-
-          <!-- KHUNG KẾT QUẢ VÀ LỜI GIẢI CHI TIẾT (HIỆN SAU KHI NỘP) -->
-          <div id="examResultBox" class="p-5 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-2 hidden">
-            <div class="flex items-center justify-between">
-              <span class="font-extrabold text-emerald-900 text-lg" id="examScoreText">Kết quả: 10.0 / 10 Điểm</span>
-              <button onclick="resetExamWorkspace()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1">
-                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Làm lại bài
-              </button>
-            </div>
-            <p class="text-xs text-emerald-800">Kết quả đã được tự động cập nhật vào bảng Quản lý học sinh của cô giáo.</p>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-  </div>
-
-  <!-- MODAL: PHÒNG CHƠI GAME TƯƠNG TÁC -->
-  <div id="gamePlayModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b pb-3">
-        <h3 id="gamePlayTitle" class="font-bold text-slate-900">Trò Chơi</h3>
-        <button onclick="document.getElementById('gamePlayModal').classList.add('hidden')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <div id="gamePlayBody" class="space-y-4"></div>
-      <div class="pt-3 border-t flex items-center justify-between">
-        <span id="gameScoreDisplay" class="text-xs font-bold text-emerald-700">Điểm: 0</span>
-        <button onclick="document.getElementById('gamePlayModal').classList.add('hidden')" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold">Thoát</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MENU CHUỘT PHẢI (RIGHT CLICK) -->
-  <div id="customContextMenu" class="fixed bg-white border border-slate-200 shadow-2xl rounded-2xl py-2 z-50 hidden min-w-[240px]">
-    <button onclick="executeAssignFromContext()" id="ctxBtnAssign" class="w-full text-left px-4 py-2.5 hover:bg-emerald-50 text-emerald-700 font-bold text-xs flex items-center gap-2">
-      <i data-lucide="send" class="w-4 h-4 text-emerald-600"></i>
-      <span>Giao bài này cho học sinh</span>
-    </button>
-    <button onclick="executeAiGradingFromContext()" id="ctxBtnAi" class="w-full text-left px-4 py-2.5 hover:bg-indigo-50 text-indigo-700 font-bold text-xs flex items-center gap-2">
-      <i data-lucide="sparkles" class="w-4 h-4 text-indigo-600"></i>
-      <span>Chấm bằng AI & Nhận xét chi tiết</span>
-    </button>
-  </div>
 
   <!-- MODAL: GIAO BÀI NHANH -->
   <div id="quickAssignModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -697,7 +577,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn."></textarea>
     </div>
   </div>
 
-  <!-- MODAL: TẢI LÊN VIDEO (TỆP HOẶC LINK) -->
+  <!-- MODAL: TẢI LÊN VIDEO -->
   <div id="uploadVideoModalDirect" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-3">
@@ -725,7 +605,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn."></textarea>
     </div>
   </div>
 
-  <!-- MODAL: ĐĂNG DỰ ÁN HỌC TẬP (LƯU QUA INDEXEDDB AN TOÀN) -->
+  <!-- MODAL: ĐĂNG DỰ ÁN HỌC TẬP -->
   <div id="postProjectModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-3">
@@ -793,7 +673,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn."></textarea>
     </div>
   </div>
 
-  <!-- MODAL: VÒNG QUAY NGẪU NHIÊN CÓ CHỌN LỚP TÙY Ý -->
+  <!-- MODAL: VÒNG QUAY (TÊN HỌC SINH HIỆN THUẦN TÚY, KHÔNG KÈM LỚP) -->
   <div id="randomPickerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-3">
@@ -805,7 +685,8 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn."></textarea>
         <select id="wheelClassSelect" class="w-full border rounded-xl p-2 bg-slate-50 font-bold text-amber-800"></select>
       </div>
       <div class="py-8 bg-amber-50 rounded-2xl border border-amber-200">
-        <div id="randomPickerDisplay" class="text-2xl font-extrabold text-amber-800">Sẵn sàng quay...</div>
+        <!-- CHỈ HIỆN HỌ TÊN HỌC SINH, KHÔNG KÈM LỚP -->
+        <div id="randomPickerDisplay" class="text-3xl font-extrabold text-amber-800">Sẵn sàng quay...</div>
       </div>
       <button onclick="spinStudentWithSound()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold shadow transition flex items-center justify-center gap-2">
         <i data-lucide="play" class="w-4 h-4"></i> Bắt đầu quay
@@ -842,12 +723,12 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn."></textarea>
 
   <!-- SCRIPT LOGIC ĐIỀU HÀNH -->
   <script>
-    // INDEXEDDB LƯU FILE MEDIA DUNG LƯỢNG LỚN
+    // INDEXEDDB
     const IDB = {
       db: null,
       init() {
         return new Promise((resolve) => {
-          const req = indexedDB.open('EngVentureMediaDB_v2', 1);
+          const req = indexedDB.open('EngVentureMediaDB_v3', 1);
           req.onupgradeneeded = (e) => {
             const db = e.target.result;
             if (!db.objectStoreNames.contains('media')) {
@@ -878,7 +759,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn."></textarea>
       }
     };
 
-    // WEB AUDIO API
+    // AUDIO ENGINE
     const AudioEngine = {
       ctx: null,
       init() {
@@ -916,8 +797,17 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn."></textarea>
       }
     };
 
-    // DỮ LIỆU CỐT LÕI (BÁM SÁT ẢNH 2 & 3)
-    const STORAGE_KEY = 'engVenture_lemai_nguyenhue_master_v12';
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-US';
+        u.rate = 0.9;
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    // DỮ LIỆU CỐT LÕI
+    const STORAGE_KEY = 'engVenture_lemai_nguyenhue_final_v13';
     const initialData = {
       classes: ['12A1', '12C1', '11A1', '11C1', '10A1'],
       currentClass: '12A1',
@@ -964,7 +854,51 @@ Giải thích: Get over nghĩa là vượt qua cú sốc/nỗi buồn.`
       videoData: {},
       gamesData: {
         'sgk': [
-          { id: 'g_1', type: 'match', title: 'Ghép Cặp Từ Vựng Unit 1', content: 'Homemaker = Người nội trợ\nBreadwinner = Trụ cột gia đình\nHeavy lifting = Việc nặng nhọc' }
+          {
+            id: 'g_1',
+            type: 'quiz',
+            title: 'Quiz Chọn A, B, C, D: Vocabulary Unit 1',
+            content: `Câu 1: In my family, my father is the ______.
+*A. breadwinner
+B. homemaker
+C. heavy lifting
+D. childcare
+Giải thích: Breadwinner là trụ cột gia đình.
+
+Câu 2: Solar and wind energy are ______ sources.
+A. destructible
+*B. renewable
+C. polluting
+D. limited
+Giải thích: Năng lượng tái tạo.`
+          },
+          {
+            id: 'g_2',
+            type: 'listen_choose',
+            title: 'Nghe Chọn Từ Đúng: Topic Environment',
+            content: `Sustainable = Bền vững
+Biodiversity = Đa dạng sinh học
+Preservation = Sự bảo tồn`
+          },
+          {
+            id: 'g_3',
+            type: 'fill_blank',
+            title: 'Điền Từ Vào Chỗ Trống: Unit 3 Future Cities',
+            content: `Câu 1: Smart cities rely on modern ______ (technological) infrastructure.
+*Đáp án: technology
+Giải thích: Cần danh từ sau tính từ modern.
+
+Câu 2: Renewable energy helps reduce ______ emissions. (CARBON)
+*Đáp án: carbon`
+          },
+          {
+            id: 'g_4',
+            type: 'match',
+            title: 'Nối Từ: Cặp Từ Vựng Anh - Việt',
+            content: `Homemaker = Người nội trợ
+Breadwinner = Trụ cột gia đình
+Heavy lifting = Việc nặng nhọc`
+          }
         ]
       },
       assignedData: [],
@@ -979,7 +913,7 @@ Giải thích: Get over nghĩa là vượt qua cú sốc/nỗi buồn.`
     let contextItem = null;
     let parsedQuestionsList = [];
     let examTimerInterval = null;
-    let examTimeRemaining = 49 * 60 + 44; // 49:44 như ảnh 2
+    let examTimeRemaining = 49 * 60 + 44;
 
     function syncDB() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
@@ -1064,7 +998,7 @@ Giải thích: Get over nghĩa là vượt qua cú sốc/nỗi buồn.`
       else document.getElementById('panel-graduation').classList.remove('hidden');
     }
 
-    // 3 TAB QUẢN TRỊ BÊN TRONG MỖI MỤC NHỎ
+    // 3 TAB QUẢN TRỊ MỤC BÀI HỌC
     function switchTopicTab(tab) {
       ['list', 'create', 'assigned'].forEach(t => {
         document.getElementById(`topView-${t}`).classList.add('hidden');
@@ -1181,7 +1115,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
     }
 
     // =========================================================================
-    // GIAO DIỆN PHÒNG THI TRỰC TUYẾN CHUẨN EDTECH (BÁM SÁT ẢNH 2 & 3)
+    // GIAO DIỆN LÀM BÀI TRỰC TUYẾN CHUẨN EDTECH (BÁM SÁT ẢNH 2 & 3)
     // =========================================================================
     function parseQuestionsFromRawText(raw) {
       const blocks = raw.split(/(?:Question|Câu)\s*\d+[:\.]/i).filter(b => b.trim());
@@ -1229,7 +1163,6 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
       document.getElementById('examResultBox').classList.add('hidden');
       document.getElementById('btnExamSubmit').classList.remove('hidden');
 
-      // HIỂN THỊ ĐOẠN VĂN BÀI ĐỌC PHÍA TRÊN NẾU CÓ (ẢNH 2)
       const passBox = document.getElementById('examPassageContainer');
       if (item.passage && item.passage.trim().length > 0) {
         passBox.innerHTML = `<h5 class="font-bold text-slate-900 mb-1.5 uppercase text-xs">Reading Passage:</h5><p class="whitespace-pre-wrap font-sans leading-relaxed">${item.passage}</p>`;
@@ -1245,7 +1178,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
     }
 
     function renderExamWorkspaceUI() {
-      // 1. THANH SỐ THỨ TỰ CÂU HỎI TRÒN CỘT TRÁI (ẢNH 2 & 3)
+      // 1. THANH SỐ THỨ TỰ CÂU HỎI TRÒN CỘT TRÁI
       const palette = document.getElementById('examNumberPalette');
       palette.innerHTML = '';
       parsedQuestionsList.forEach((q, idx) => {
@@ -1260,7 +1193,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
         palette.appendChild(btn);
       });
 
-      // 2. VÙNG HIỂN THỊ CÂU HỎI VỚI CÁC HỘP PHƯƠNG ÁN NẰM NGANG CÓ NÚT TRÒN (ẢNH 2 & 3)
+      // 2. VÙNG HIỂN THỊ CÂU HỎI VỚI NÚT TRÒN TRẮC NGHIỆM
       const container = document.getElementById('examQuestionsContainer');
       container.innerHTML = '';
 
@@ -1277,7 +1210,6 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
           </div>
         `;
 
-        // 4 NÚT TRÒN ĐẦU 4 PHƯƠNG ÁN NẰM TRONG HỘP BO TRÒN (BÁM SÁT ẢNH 2 & 3)
         innerHTML += `
           <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-1">
             ${q.options.map(opt => `
@@ -1290,7 +1222,6 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
           </div>
         `;
 
-        // Lời giải thích chi tiết (hiện sau khi nộp)
         innerHTML += `
           <div id="exp_box_${idx}" class="hidden p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs space-y-1">
             <span class="font-bold text-emerald-800 block uppercase">Lời giải:</span>
@@ -1356,7 +1287,6 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
       }, 1000);
     }
 
-    // NỘP BÀI: TỰ ĐỘNG CHẤM & GHI NHẬN VÀO QUẢN LÝ LỚP
     function submitExamWorkspace() {
       if (examTimerInterval) clearInterval(examTimerInterval);
 
@@ -1378,7 +1308,6 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
       document.getElementById('examResultBox').classList.remove('hidden');
       document.getElementById('btnExamSubmit').classList.add('hidden');
 
-      // TỰ ĐỘNG GHI NHẬN KẾT QUẢ VÀO QUẢN LÝ HỌC SINH
       const studentName = document.getElementById('examStudentName').innerText;
       let st = db.students.find(s => s.name.toLowerCase() === studentName.toLowerCase()) || db.students[0];
       if (st) {
@@ -1408,7 +1337,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
     }
 
     // =========================================================================
-    // MỤC GAME (THAO TÁC TRỰC TIẾP KHÔNG BỊ ĐƠ)
+    // MỤC GAME (HỖ TRỢ THAO TÁC CẢ 4 THỂ LOẠI GAME THẬT 100%)
     // =========================================================================
     let currentGameDomain = 'sgk';
     function enterGameHub(domain) {
@@ -1440,6 +1369,61 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
       if (tab === 'list') renderGameList();
     }
 
+    function changeGameInputGuide() {
+      const type = document.getElementById('inGameType').value;
+      const lbl = document.getElementById('lblGameInputGuide');
+      const txt = document.getElementById('inGameContent');
+
+      if (type === 'match') {
+        lbl.innerText = 'Dữ liệu nối từ (Mỗi dòng một cặp: Từ tiếng Anh = Nghĩa tiếng Việt):';
+        txt.placeholder = "Sustainable = Bền vững\nBiodiversity = Đa dạng sinh học\nInnovation = Đổi mới sáng tạo";
+      } else if (type === 'quiz') {
+        lbl.innerText = 'Dữ liệu Quiz trắc nghiệm (Đánh dấu * trước đáp án đúng):';
+        txt.placeholder = "Câu 1: In my family, my father is the ______.\n*A. breadwinner\nB. homemaker\nC. heavy lifting\nD. childcare\nGiải thích: Trụ cột gia đình.";
+      } else if (type === 'listen_choose') {
+        lbl.innerText = 'Dữ liệu Nghe chọn từ (Mỗi dòng một từ tiếng Anh = Nghĩa):';
+        txt.placeholder = "Sustainable = Bền vững\nBiodiversity = Đa dạng sinh học\nPreservation = Sự bảo tồn";
+      } else if (type === 'fill_blank') {
+        lbl.innerText = 'Dữ liệu Điền từ (Có ô trống ______ và dòng *Đáp án: ...):';
+        txt.placeholder = "Câu 1: Solar and wind are examples of ______ (renew) sources.\n*Đáp án: renewable\nGiải thích: Cần tính từ trước sources.";
+      }
+    }
+
+    function insertSampleGameData() {
+      const type = document.getElementById('inGameType').value;
+      if (type === 'quiz') {
+        document.getElementById('inGameTitle').value = 'Quiz Trắc Nghiệm Phản Xạ Unit 1';
+        document.getElementById('inGameContent').value = `Câu 1: In my family, my father is the ______.
+*A. breadwinner
+B. homemaker
+C. heavy lifting
+D. childcare
+Giải thích: Trụ cột gia đình.
+
+Câu 2: Renewable energy sources are ______ to the environment.
+A. harmful
+*B. eco-friendly
+C. destructive
+D. toxic
+Giải thích: Thân thiện với môi trường.`;
+      } else if (type === 'listen_choose') {
+        document.getElementById('inGameTitle').value = 'Nghe Chọn Từ Đúng: Environment Topic';
+        document.getElementById('inGameContent').value = `Sustainable = Bền vững
+Biodiversity = Đa dạng sinh học
+Preservation = Sự bảo tồn`;
+      } else if (type === 'fill_blank') {
+        document.getElementById('inGameTitle').value = 'Điền Từ Khuyết Vào Chỗ Trống';
+        document.getElementById('inGameContent').value = `Câu 1: Smart cities rely on modern ______ (technological) infrastructure.
+*Đáp án: technology
+Giải thích: Cần danh từ sau tính từ modern.`;
+      } else {
+        document.getElementById('inGameTitle').value = 'Nối Cặp Từ Vựng Unit 1';
+        document.getElementById('inGameContent').value = `Homemaker = Người nội trợ
+Breadwinner = Trụ cột gia đình
+Heavy lifting = Công việc nặng nhọc`;
+      }
+    }
+
     function renderGameList() {
       const container = document.getElementById('gameListContainer');
       container.innerHTML = '';
@@ -1452,11 +1436,17 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
       }
 
       list.forEach((g) => {
+        const typeLabels = {
+          match: 'Nối Từ',
+          quiz: 'Quiz A,B,C,D',
+          listen_choose: 'Nghe Chọn Từ',
+          fill_blank: 'Điền Chỗ Trống'
+        };
         const div = document.createElement('div');
         div.className = 'p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3 hover:border-amber-400 transition';
         div.innerHTML = `
           <div class="flex items-center justify-between">
-            <span class="px-2.5 py-0.5 bg-amber-50 text-amber-800 rounded-lg text-xs font-bold uppercase">${g.type}</span>
+            <span class="px-2.5 py-0.5 bg-amber-50 text-amber-800 rounded-lg text-xs font-bold uppercase">${typeLabels[g.type] || g.type}</span>
           </div>
           <h4 class="font-bold text-slate-900 text-sm">${g.title}</h4>
           <p class="text-xs text-slate-500 font-mono line-clamp-2">${g.content}</p>
@@ -1487,6 +1477,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
       switchGameTab('list');
     }
 
+    // THAO TÁC CHƠI THẬT CẢ 4 THỂ LOẠI GAME
     let selectedLeftWord = null;
     function playSpecificGame(id) {
       const g = (db.gamesData[currentGameDomain] || []).find(x => x.id === id);
@@ -1497,29 +1488,118 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
       const body = document.getElementById('gamePlayBody');
       selectedLeftWord = null;
 
-      // Xử lý game ghép từ nối chữ mượt mà
-      const lines = g.content.split('\n').filter(l => l.includes('='));
-      const pairs = lines.map(l => {
-        const parts = l.split('=');
-        return { en: parts[0].trim(), vn: parts[1].trim() };
-      });
+      if (g.type === 'match') {
+        // 1. GAME NỐI TỪ
+        const lines = g.content.split('\n').filter(l => l.includes('='));
+        const pairs = lines.map(l => {
+          const parts = l.split('=');
+          return { en: parts[0].trim(), vn: parts[1].trim() };
+        });
 
-      body.innerHTML = `
-        <p class="text-xs text-slate-500">Bấm chọn 1 từ tiếng Anh bên trái rồi chọn nghĩa tiếng Việt bên phải:</p>
-        <div class="grid grid-cols-2 gap-3 text-xs font-bold">
-          <div id="gameLeftList" class="space-y-2">
-            ${pairs.map(p => `
-              <button onclick="pickGameLeft(this, '${p.en}', '${p.vn}')" class="w-full text-left p-3 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition">${p.en}</button>
+        body.innerHTML = `
+          <p class="text-xs text-slate-500">Bấm chọn 1 từ tiếng Anh bên trái rồi chọn nghĩa tiếng Việt bên phải:</p>
+          <div class="grid grid-cols-2 gap-3 text-xs font-bold">
+            <div id="gameLeftList" class="space-y-2">
+              ${pairs.map(p => `
+                <button onclick="pickGameLeft(this, '${p.en}', '${p.vn}')" class="w-full text-left p-3 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition">${p.en}</button>
+              `).join('')}
+            </div>
+            <div id="gameRightList" class="space-y-2">
+              ${pairs.sort(() => Math.random() - 0.5).map(p => `
+                <button onclick="pickGameRight(this, '${p.vn}')" class="w-full text-left p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition">${p.vn}</button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (g.type === 'quiz') {
+        // 2. GAME CHỌN A, B, C, D (QUIZ TRẮC NGHIỆM)
+        const questions = parseQuestionsFromRawText(g.content);
+        body.innerHTML = `
+          <div class="space-y-4 max-h-[60vh] overflow-y-auto">
+            ${questions.map((q, idx) => `
+              <div class="p-4 bg-slate-50 border rounded-2xl space-y-3">
+                <p class="font-bold text-xs text-slate-900">Câu ${q.num}: ${q.question}</p>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  ${q.options.map(opt => `
+                    <button onclick="checkGameQuizAnswer(this, '${opt.letter}', '${q.correctOpt}')" class="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-blue-50 font-bold text-left transition">
+                      ${opt.letter}. ${opt.text}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
             `).join('')}
           </div>
-          <div id="gameRightList" class="space-y-2">
-            ${pairs.sort(() => Math.random() - 0.5).map(p => `
-              <button onclick="pickGameRight(this, '${p.vn}')" class="w-full text-left p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition">${p.vn}</button>
-            `).join('')}
+        `;
+      } else if (g.type === 'listen_choose') {
+        // 3. GAME NGHE CHỌN TỪ ĐÚNG (CÓ PHÁT ÂM AI)
+        const lines = g.content.split('\n').filter(l => l.includes('='));
+        const words = lines.map(l => l.split('=')[0].trim());
+        const currentTargetWord = words[0] || 'Sustainable';
+
+        body.innerHTML = `
+          <div class="text-center space-y-4 py-4">
+            <button onclick="speakText('${currentTargetWord}')" class="px-6 py-3 bg-purple-600 text-white rounded-2xl text-xs font-bold shadow flex items-center gap-2 mx-auto hover:bg-purple-700 transition">
+              <i data-lucide="volume-2" class="w-5 h-5"></i> Bấm để nghe phát âm AI
+            </button>
+            <p class="text-xs text-slate-500">Em vừa nghe thấy từ nào dưới đây?</p>
+            <div class="grid grid-cols-2 gap-3 text-xs font-bold">
+              ${words.map(w => `
+                <button onclick="if('${w}' === '${currentTargetWord}') { AudioEngine.playWin(); alert('Chính xác! Em nghe rất chuẩn.'); } else { alert('Chưa chính xác, hãy bấm nghe lại nhé!'); }" class="p-3 border border-slate-200 rounded-xl hover:bg-purple-50 bg-white transition">${w}</button>
+              `).join('')}
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      } else if (g.type === 'fill_blank') {
+        // 4. GAME ĐIỀN TỪ VÀO CHỖ TRỐNG
+        const questions = g.content.split(/Câu\s*\d+[:\.]/i).filter(b => b.trim());
+        body.innerHTML = `
+          <div class="space-y-4 max-h-[60vh] overflow-y-auto">
+            ${questions.map((qText, idx) => {
+              const lines = qText.trim().split('\n');
+              const prompt = lines[0];
+              const ansLine = lines.find(l => l.toLowerCase().includes('đáp án:')) || '';
+              const correctAns = ansLine.split(/đáp án:/i)[1] ? ansLine.split(/đáp án:/i)[1].trim() : '';
+
+              return `
+                <div class="p-4 bg-slate-50 border rounded-2xl space-y-3 text-xs">
+                  <p class="font-bold text-slate-900">${prompt}</p>
+                  <input type="text" id="game_fill_${idx}" placeholder="Gõ từ điền vào đây..." class="w-full border rounded-xl p-2.5 font-bold">
+                  <button onclick="checkGameFillBlank('${idx}', '${correctAns}')" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold shadow">Kiểm tra</button>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      lucide.createIcons();
       modal.classList.remove('hidden');
+    }
+
+    function checkGameQuizAnswer(btn, chosen, correct) {
+      if (chosen.toUpperCase() === correct.toUpperCase()) {
+        AudioEngine.playWin();
+        btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+        alert('Chính xác! Chúc mừng em.');
+      } else {
+        btn.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900');
+        alert(`Chưa đúng! Đáp án đúng là: ${correct}`);
+      }
+    }
+
+    function checkGameFillBlank(idx, correct) {
+      const input = document.getElementById(`game_fill_${idx}`);
+      const val = input.value.trim().toLowerCase();
+      const cor = correct.trim().toLowerCase();
+
+      if (val === cor || cor.includes(val)) {
+        AudioEngine.playWin();
+        input.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900');
+        alert('Hoàn toàn chính xác!');
+      } else {
+        input.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+        alert(`Chưa chính xác! Đáp án đúng: ${correct}`);
+      }
     }
 
     function pickGameLeft(btn, en, vn) {
@@ -1543,7 +1623,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
     }
 
     // =========================================================================
-    // DỰ ÁN HỌC TẬP (LƯU TỆP THẬT BẰNG INDEXEDDB KHÔNG BAO GIỜ BỊ ĐƠ NÚT TẢI LÊN)
+    // DỰ ÁN HỌC TẬP
     // =========================================================================
     async function renderProjectsList() {
       const container = document.getElementById('projectCardsContainer');
@@ -1645,7 +1725,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
         syncDB();
         await renderProjectsList();
         document.getElementById('postProjectModal').classList.add('hidden');
-        alert('Đã tải lên bài dự án thành công! Video đã hiển thị trực tiếp trong danh sách.');
+        alert('Đã tải lên bài dự án thành công!');
       } catch (err) {
         alert('Lỗi khi tải tệp: ' + err);
       } finally {
@@ -1689,7 +1769,88 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
       document.getElementById('customContextMenu').classList.add('hidden');
     }
 
-    // QUẢN LÝ LỚP HỌC & VIDEO
+    // =========================================================================
+    // VÒNG QUAY (TÊN HỌC SINH HIỆN THUẦN TÚY, KHÔNG KÈM LỚP)
+    // =========================================================================
+    function openRandomPickerModal() {
+      renderClassSelects();
+      document.getElementById('randomPickerModal').classList.remove('hidden');
+    }
+
+    function spinStudentWithSound() {
+      const selectedClass = document.getElementById('wheelClassSelect').value;
+      const list = db.students.filter(s => s.class === selectedClass);
+      if (!list.length) return alert(`Lớp ${selectedClass} chưa có học sinh nào!`);
+      const disp = document.getElementById('randomPickerDisplay');
+
+      let count = 16;
+      let interval = setInterval(() => {
+        AudioEngine.playTick();
+        const rand = list[Math.floor(Math.random() * list.length)];
+        // CHỈ HIỆN HỌ TÊN HỌC SINH, KHÔNG KÈM LỚP
+        disp.innerText = `${rand.name}`;
+        count--;
+        if (count <= 0) {
+          clearInterval(interval);
+          AudioEngine.playWin();
+          disp.classList.add('scale-110');
+          setTimeout(() => disp.classList.remove('scale-110'), 250);
+        }
+      }, 90);
+    }
+
+    // ĐỒNG HỒ
+    let timerSeconds = 180;
+    let timerRunning = false;
+    let timerInterval = null;
+
+    function applyCustomTimer() {
+      const m = parseInt(document.getElementById('inCustomMinutes').value) || 0;
+      const s = parseInt(document.getElementById('inCustomSeconds').value) || 0;
+      setTimer(m * 60 + s);
+    }
+    function setTimer(sec) {
+      timerSeconds = sec;
+      updateTimerDisplay();
+      if (timerRunning) toggleTimerRunning();
+    }
+    function updateTimerDisplay() {
+      const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+      const s = (timerSeconds % 60).toString().padStart(2, '0');
+      document.getElementById('timerDisplayNumber').innerText = `${m}:${s}`;
+    }
+    function toggleTimerRunning() {
+      const btn = document.getElementById('btnTimerControl');
+      if (timerRunning) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        btn.innerText = 'Tiếp tục';
+      } else {
+        timerRunning = true;
+        btn.innerText = 'Tạm dừng';
+        timerInterval = setInterval(() => {
+          if (timerSeconds > 0) {
+            timerSeconds--;
+            updateTimerDisplay();
+            if (timerSeconds <= 5) AudioEngine.playTick();
+          } else {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            btn.innerText = 'Bắt đầu';
+            alert('Hết giờ làm bài!');
+          }
+        }, 1000);
+      }
+    }
+    function resetTimerCount() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerRunning = false;
+      timerSeconds = 180;
+      updateTimerDisplay();
+      document.getElementById('btnTimerControl').innerText = 'Bắt đầu';
+    }
+
+    // QUẢN LÝ LỚP
     function renderClassSelects() {
       const sel = document.getElementById('selectedClassFilter');
       const wheelSel = document.getElementById('wheelClassSelect');
@@ -1865,83 +2026,164 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn/cú sốc.`;
       });
     }
 
-    // VÒNG QUAY CÓ CHỌN LỚP
-    function openRandomPickerModal() {
-      renderClassSelects();
-      document.getElementById('randomPickerModal').classList.remove('hidden');
+    function openQuickAssignModal(id, title) {
+      document.getElementById('inAssignItemTitle').value = title;
+      const sel = document.getElementById('selectAssignClass');
+      sel.innerHTML = '';
+      db.classes.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.innerText = `Lớp ${c}`;
+        sel.appendChild(opt);
+      });
+      document.getElementById('quickAssignModal').classList.remove('hidden');
     }
 
-    function spinStudentWithSound() {
-      const selectedClass = document.getElementById('wheelClassSelect').value;
-      const list = db.students.filter(s => s.class === selectedClass);
-      if (!list.length) return alert(`Lớp ${selectedClass} chưa có học sinh nào!`);
-      const disp = document.getElementById('randomPickerDisplay');
+    function confirmQuickAssignAction() {
+      const title = document.getElementById('inAssignItemTitle').value;
+      const targetClass = document.getElementById('selectAssignClass').value;
+      const deadline = document.getElementById('inAssignDeadline').value;
 
-      let count = 16;
-      let interval = setInterval(() => {
-        AudioEngine.playTick();
-        const rand = list[Math.floor(Math.random() * list.length)];
-        disp.innerText = `${rand.name} (${selectedClass})`;
-        count--;
-        if (count <= 0) {
-          clearInterval(interval);
-          AudioEngine.playWin();
-          disp.classList.add('scale-110');
-          setTimeout(() => disp.classList.remove('scale-110'), 250);
-        }
-      }, 90);
+      const newAsg = {
+        id: 'asg_' + Date.now(),
+        topicKey: currentTopicKey,
+        title: title,
+        targetClass: targetClass,
+        deadline: deadline,
+        completedStudents: [
+          { name: 'Nguyễn Hoàng Kim Yến', score: '9.8 / 10', date: '31/10/2026', note: 'Làm bài xuất sắc!' },
+          { name: 'Trần Văn Nam', score: '8.0 / 10', date: '31/10/2026', note: 'Cần chú ý thêm câu 2' }
+        ]
+      };
+
+      db.assignedData.push(newAsg);
+      syncDB();
+      document.getElementById('quickAssignModal').classList.add('hidden');
+      alert(`Đã giao bài "${title}" cho lớp ${targetClass}! Bài hiện đã nằm trong mục "Bài đã giao".`);
+      switchTopicTab('assigned');
     }
 
-    // ĐỒNG HỒ
-    let timerSeconds = 180;
-    let timerRunning = false;
-    let timerInterval = null;
+    function renderTopicAssigned() {
+      const container = document.getElementById('topicAssignedContainer');
+      container.innerHTML = '';
+      const list = db.assignedData.filter(a => a.topicKey === currentTopicKey);
 
-    function applyCustomTimer() {
-      const m = parseInt(document.getElementById('inCustomMinutes').value) || 0;
-      const s = parseInt(document.getElementById('inCustomSeconds').value) || 0;
-      setTimer(m * 60 + s);
+      if (!list.length) {
+        container.innerHTML = `<div class="p-8 text-center text-slate-400 text-xs">Chưa có bài nào được giao trong mục này.</div>`;
+        return;
+      }
+
+      list.forEach(a => {
+        const div = document.createElement('div');
+        div.className = 'p-4 rounded-2xl border border-emerald-200 bg-emerald-50/50 flex items-center justify-between hover:bg-emerald-50 transition cursor-pointer';
+        div.onclick = () => viewAssignedTaskDetails(a.id);
+        div.innerHTML = `
+          <div>
+            <h5 class="font-bold text-slate-900 text-sm">${a.title}</h5>
+            <span class="text-xs text-emerald-800 font-semibold">Giao lớp: ${a.targetClass} | Hạn: ${a.deadline}</span>
+          </div>
+          <span class="px-3 py-1 bg-emerald-600 text-white rounded-xl text-xs font-bold">Xem kết quả học sinh &rarr;</span>
+        `;
+        container.appendChild(div);
+      });
     }
-    function setTimer(sec) {
-      timerSeconds = sec;
-      updateTimerDisplay();
-      if (timerRunning) toggleTimerRunning();
+
+    function viewAssignedTaskDetails(asgId) {
+      const task = db.assignedData.find(x => x.id === asgId);
+      if (!task) return;
+
+      document.getElementById('assignedDetailTitle').innerText = task.title;
+      document.getElementById('assignedDetailSub').innerText = `Lớp ${task.targetClass} | Hạn nộp: ${task.deadline}`;
+      const container = document.getElementById('assignedStudentsList');
+      container.innerHTML = '';
+
+      task.completedStudents.forEach(st => {
+        const row = document.createElement('div');
+        row.className = 'p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs';
+        row.innerHTML = `
+          <div>
+            <span class="font-bold text-slate-900">${st.name}</span>
+            <p class="text-slate-500 text-[11px]">Nộp ngày: ${st.date}</p>
+            <p class="text-emerald-700 italic font-semibold">Nhận xét: "${st.note}"</p>
+          </div>
+          <span class="text-base font-extrabold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">${st.score}</span>
+        `;
+        container.appendChild(row);
+      });
+
+      document.getElementById('assignedDetailModal').classList.remove('hidden');
     }
-    function updateTimerDisplay() {
-      const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
-      const s = (timerSeconds % 60).toString().padStart(2, '0');
-      document.getElementById('timerDisplayNumber').innerText = `${m}:${s}`;
+
+    function openUploadVideoModalDirect() {
+      document.getElementById('uploadVideoModalDirect').classList.remove('hidden');
     }
-    function toggleTimerRunning() {
-      const btn = document.getElementById('btnTimerControl');
-      if (timerRunning) {
-        clearInterval(timerInterval);
-        timerRunning = false;
-        btn.innerText = 'Tiếp tục';
+
+    async function saveNewDirectVideo() {
+      const title = document.getElementById('inDirectVideoTitle').value.trim();
+      const link = document.getElementById('inDirectVideoLink').value.trim();
+      const fileInput = document.getElementById('inDirectVideoFile');
+
+      if (!title) return alert('Vui lòng nhập tiêu đề video bài học!');
+
+      const file = fileInput.files[0];
+      const videoId = 'vid_' + Date.now();
+
+      if (file) {
+        await IDB.saveFile(videoId, file);
+        if (!db.videoData[currentTopicKey]) db.videoData[currentTopicKey] = [];
+        db.videoData[currentTopicKey].push({ id: videoId, title: title, url: null, hasLocalFile: true });
+        syncDB();
+        renderVideoLessons();
+        document.getElementById('uploadVideoModalDirect').classList.add('hidden');
+        alert('Đã tải lên video từ máy tính thành công!');
+      } else if (link) {
+        if (!db.videoData[currentTopicKey]) db.videoData[currentTopicKey] = [];
+        db.videoData[currentTopicKey].push({ id: videoId, title: title, url: link, hasLocalFile: false });
+        syncDB();
+        renderVideoLessons();
+        document.getElementById('uploadVideoModalDirect').classList.add('hidden');
+        alert('Đã lưu video từ link thành công!');
       } else {
-        timerRunning = true;
-        btn.innerText = 'Tạm dừng';
-        timerInterval = setInterval(() => {
-          if (timerSeconds > 0) {
-            timerSeconds--;
-            updateTimerDisplay();
-            if (timerSeconds <= 5) AudioEngine.playTick();
-          } else {
-            clearInterval(timerInterval);
-            timerRunning = false;
-            btn.innerText = 'Bắt đầu';
-            AudioEngine.playAlarm();
-            alert('Hết giờ làm bài!');
-          }
-        }, 1000);
+        alert('Vui lòng chọn tệp video hoặc dán link!');
       }
     }
-    function resetTimerCount() {
-      if (timerInterval) clearInterval(timerInterval);
-      timerRunning = false;
-      timerSeconds = 180;
-      updateTimerDisplay();
-      document.getElementById('btnTimerControl').innerText = 'Bắt đầu';
+
+    async function renderVideoLessons() {
+      const container = document.getElementById('videoLessonsContainer');
+      container.innerHTML = '';
+      const list = db.videoData[currentTopicKey] || [];
+
+      if (!list.length) {
+        container.innerHTML = `<div class="col-span-2 p-10 text-center text-slate-400 text-xs">Chưa có video nào. Cô bấm "+ Tải lên video" nhé!</div>`;
+        return;
+      }
+
+      for (let i = 0; i < list.length; i++) {
+        const v = list[i];
+        let videoSrc = v.url;
+        if (v.hasLocalFile) {
+          const blob = await IDB.getFile(v.id);
+          if (blob) videoSrc = URL.createObjectURL(blob);
+        }
+
+        const div = document.createElement('div');
+        div.className = 'p-4 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3';
+        div.innerHTML = `
+          <h4 class="font-bold text-sm text-slate-900">${i + 1}. ${v.title}</h4>
+          <div class="aspect-video bg-black rounded-xl overflow-hidden shadow">
+            ${v.hasLocalFile ? `
+              <video controls controlsList="nodownload" oncontextmenu="return false;" class="w-full h-full">
+                <source src="${videoSrc}">
+                Không hỗ trợ phát video.
+              </video>
+            ` : `
+              <iframe class="w-full h-full" src="${v.url}" title="Video player" frameborder="0" allowfullscreen></iframe>
+            `}
+          </div>
+          <p class="text-[11px] text-slate-500 italic">* Chế độ an toàn: Đã khóa tải về để bảo vệ bài giảng của cô giáo.</p>
+        `;
+        container.appendChild(div);
+      }
     }
   </script>
 </body>
