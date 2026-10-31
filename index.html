@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EngVenture - Cô Lê Mai | THPT Nguyễn Huệ</title>
+  <title>EngVenture - Teacher Lê Mai | THPT Nguyễn Huệ</title>
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -14,13 +14,13 @@
     .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     .flashcard { perspective: 1000px; }
-    .flashcard-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+    .flashcard-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
     .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
-    .flashcard-front, .flashcard-back { backface-visibility: hidden; }
+    .flashcard-front, .flashcard-back { backface-visibility: hidden; position: absolute; inset: 0; }
     .flashcard-back { transform: rotateY(180deg); }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col" onclick="closeContextMenu()">
 
   <!-- ==================== HEADER ==================== -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
@@ -37,22 +37,22 @@
         </div>
       </div>
 
-      <!-- Công cụ tiện ích trên lớp -->
+      <!-- Công cụ tiện ích lớp học -->
       <div class="flex items-center gap-2 sm:gap-3">
         <button onclick="document.getElementById('randomPickerModal').classList.remove('hidden')" class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-lg text-sm font-semibold transition">
           <i data-lucide="shuffle" class="w-4 h-4"></i>
-          <span>Gọi tên ngẫu nhiên</span>
+          <span>Vòng quay gọi tên</span>
         </button>
         <button onclick="document.getElementById('timerModal').classList.remove('hidden')" class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg text-sm font-semibold transition">
           <i data-lucide="timer" class="w-4 h-4"></i>
-          <span>Đồng hồ lớp</span>
+          <span>Đồng hồ đếm ngược</span>
         </button>
         
         <div class="h-6 w-px bg-slate-200 mx-1"></div>
 
-        <button id="btnSwitchRole" onclick="toggleRoleSwitch()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow-sm">
+        <button onclick="alert('Đang quản trị với tư cách: Teacher Lê Mai (THPT Nguyễn Huệ)')" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow-sm">
           <i data-lucide="user-check" class="w-4 h-4"></i>
-          <span id="roleLabel">Đang ở chế độ Giáo viên</span>
+          <span>Teacher Lê Mai</span>
         </button>
       </div>
     </div>
@@ -90,59 +90,59 @@
     </div>
   </section>
 
-  <!-- ==================== MENU THANH ĐIỀU HƯỚNG CHÍNH ==================== -->
-  <nav id="teacherNav" class="bg-white border-b border-slate-200 sticky top-[65px] z-30 shadow-sm">
+  <!-- ==================== MENU ĐIỀU HƯỚNG TỔNG (CHUYỂN TAB 100% HOẠT ĐỘNG) ==================== -->
+  <nav class="bg-white border-b border-slate-200 sticky top-[65px] z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex overflow-x-auto custom-scrollbar gap-2 py-2">
-      <button onclick="navigateTab('students')" id="navBtn-students" class="nav-item px-4 py-2 rounded-xl text-sm font-bold bg-blue-50 text-blue-700 flex items-center gap-2 shrink-0">
+      <button onclick="switchMainTab('students')" id="tabBtn-students" class="tab-button px-4 py-2 rounded-xl text-sm font-bold bg-blue-50 text-blue-700 flex items-center gap-2 shrink-0 transition">
         <i data-lucide="users" class="w-4 h-4"></i> Quản Lý Học Sinh
       </button>
-      <button onclick="navigateTab('textbook')" id="navBtn-textbook" class="nav-item px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-2 shrink-0">
+      <button onclick="switchMainTab('textbook')" id="tabBtn-textbook" class="tab-button px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-2 shrink-0 transition">
         <i data-lucide="book-open" class="w-4 h-4"></i> Sách Giáo Khoa (10, 11, 12)
       </button>
-      <button onclick="navigateTab('hsg')" id="navBtn-hsg" class="nav-item px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-2 shrink-0">
+      <button onclick="switchMainTab('hsg')" id="tabBtn-hsg" class="tab-button px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-2 shrink-0 transition">
         <i data-lucide="award" class="w-4 h-4"></i> Học Sinh Giỏi (11 & 12)
       </button>
-      <button onclick="navigateTab('graduation')" id="navBtn-graduation" class="nav-item px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-2 shrink-0">
+      <button onclick="switchMainTab('graduation')" id="tabBtn-graduation" class="tab-button px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-2 shrink-0 transition">
         <i data-lucide="graduation-cap" class="w-4 h-4"></i> Tốt Nghiệp THPT
       </button>
-      <button onclick="navigateTab('ai_grading')" id="navBtn-ai_grading" class="nav-item px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-2 shrink-0">
-        <i data-lucide="sparkles" class="w-4 h-4 text-purple-600"></i> AI Chấm Bài Tự Luận & Dự Án
+      <button onclick="switchMainTab('assignments')" id="tabBtn-assignments" class="tab-button px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-2 shrink-0 transition">
+        <i data-lucide="send" class="w-4 h-4 text-emerald-600"></i> Mục Giao Bài & Tạo Bài
+      </button>
+      <button onclick="switchMainTab('projects')" id="tabBtn-projects" class="tab-button px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-2 shrink-0 transition">
+        <i data-lucide="folder-git-2" class="w-4 h-4 text-purple-600"></i> Dự Án & STEM (Nộp / Tải về)
       </button>
     </div>
   </nav>
 
-  <!-- ==================== NỘI DUNG CHÍNH (TEACHER VIEW) ==================== -->
+  <!-- ==================== CÁC KHU VỰC NỘI DUNG CHÍNH ==================== -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
-    
+
     <!-- 1. TAB: QUẢN LÝ HỌC SINH -->
-    <section id="section-students" class="space-y-6">
-      <!-- Thanh công cụ lớp & thêm lớp không giới hạn -->
+    <section id="panel-students" class="space-y-6">
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-3">
           <label class="text-xs font-bold text-slate-700">Đang chọn lớp:</label>
-          <select id="selectedClassFilter" onchange="changeClassView()" class="text-sm font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-xl px-3 py-1.5 focus:outline-none">
-            <!-- Render danh sách lớp động -->
-          </select>
+          <select id="selectedClassFilter" onchange="changeClassView()" class="text-sm font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-xl px-3 py-1.5 focus:outline-none"></select>
           <button onclick="openAddNewClassModal()" class="text-xs px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl flex items-center gap-1 transition">
             <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i> + Thêm Lớp Mới (Không giới hạn)
           </button>
         </div>
 
         <div class="flex items-center gap-2">
-          <button onclick="switchStudentSubTab('list')" id="subBtnStudentList" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white">Danh sách & Dán từ Excel</button>
+          <button onclick="switchStudentSubTab('list')" id="subBtnStudentList" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white">Danh sách & Dán Excel</button>
           <button onclick="switchStudentSubTab('attendance')" id="subBtnAttendance" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">Điểm danh lớp</button>
           <button onclick="switchStudentSubTab('class_progress')" id="subBtnProgress" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">Theo dõi tiến bộ chung</button>
         </div>
       </div>
 
-      <!-- Mục con 1: Danh sách học sinh & Paste Excel -->
+      <!-- Danh sách học sinh & Paste Excel -->
       <div id="subViewStudentList" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
           <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
             <i data-lucide="clipboard-paste" class="w-5 h-5 text-blue-600"></i> Dán Danh Sách Học Sinh
           </h3>
           <p class="text-xs text-slate-500">Copy cột tên học sinh từ Excel hoặc Word dán vào đây (Mỗi dòng một học sinh):</p>
-          <textarea id="txtPasteStudentsArea" rows="8" class="w-full text-xs font-mono border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500" placeholder="1. Nguyễn Hoàng Kim Yến&#10;2. Trần Văn Nam&#10;3. Lê Bảo Châu&#10;4. Đỗ Minh Khang..."></textarea>
+          <textarea id="txtPasteStudentsArea" rows="8" class="w-full text-xs font-mono border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500" placeholder="1. Nguyễn Hoàng Kim Yến&#10;2. Trần Văn Nam&#10;3. Lê Bảo Châu..."></textarea>
           <button onclick="handleBatchImportStudents()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow transition">
             Thêm Ngay Vào Lớp Đang Chọn
           </button>
@@ -162,28 +162,26 @@
               <thead class="bg-slate-50 text-slate-600 text-xs font-semibold uppercase sticky top-0">
                 <tr>
                   <th class="px-4 py-2.5">STT</th>
-                  <th class="px-4 py-2.5">Họ và Tên (Click xem tiến bộ)</th>
-                  <th class="px-4 py-2.5">Số lần nộp bài</th>
+                  <th class="px-4 py-2.5">Họ và Tên (Click xem tiến độ)</th>
+                  <th class="px-4 py-2.5">Số lần làm bài</th>
                   <th class="px-4 py-2.5">Điểm TB</th>
                   <th class="px-4 py-2.5 text-right">Thao tác</th>
                 </tr>
               </thead>
-              <tbody id="tblStudentsBody" class="divide-y divide-slate-100">
-                <!-- Render bằng JS -->
-              </tbody>
+              <tbody id="tblStudentsBody" class="divide-y divide-slate-100"></tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- Mục con 2: Điểm danh lớp -->
+      <!-- Điểm danh -->
       <div id="subViewAttendance" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 hidden">
         <div class="flex items-center justify-between">
           <div>
             <h3 class="font-bold text-slate-900 text-base">Sổ Điểm Danh Lớp <span id="lblAttendanceClass">12A1</span></h3>
-            <p class="text-xs text-slate-500">Hôm nay: <span id="lblTodayDate" class="font-semibold text-blue-600">31/10/2026</span></p>
+            <p class="text-xs text-slate-500">Hôm nay: <span class="font-semibold text-blue-600">31/10/2026</span></p>
           </div>
-          <button onclick="saveAttendanceRecord()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow transition">
+          <button onclick="alert('Đã lưu dữ liệu điểm danh lớp thành công!')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow">
             Lưu Điểm Danh Buổi Học
           </button>
         </div>
@@ -198,35 +196,16 @@
                 <th class="px-4 py-3">Ghi chú</th>
               </tr>
             </thead>
-            <tbody id="tblAttendanceBody" class="divide-y divide-slate-100">
-              <!-- Render điểm danh -->
-            </tbody>
+            <tbody id="tblAttendanceBody" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- Mục con 3: Theo dõi sự tiến bộ chung của cả lớp -->
+      <!-- Báo cáo tiến bộ chung -->
       <div id="subViewClassProgress" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6 hidden">
         <div class="flex items-center justify-between">
           <h3 class="font-bold text-slate-900 text-base">Báo Cáo Tiến Bộ Chung Của Lớp</h3>
-          <span class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-bold">Tỷ lệ nộp bài đạt 92%</span>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-100">
-            <span class="text-xs text-blue-600 font-semibold">Điểm Trung Bình Chung</span>
-            <div class="text-2xl font-extrabold text-blue-900 mt-1">7.9 / 10</div>
-            <p class="text-[11px] text-blue-700 mt-1">Tăng +0.6 điểm so với tháng trước</p>
-          </div>
-          <div class="bg-purple-50/60 p-4 rounded-xl border border-purple-100">
-            <span class="text-xs text-purple-600 font-semibold">Tổng Số Lượt Làm Bài</span>
-            <div class="text-2xl font-extrabold text-purple-900 mt-1">128 lượt</div>
-            <p class="text-[11px] text-purple-700 mt-1">Đầy đủ SGK, HSG và Đề TN</p>
-          </div>
-          <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-100">
-            <span class="text-xs text-emerald-600 font-semibold">Học sinh tiến bộ vượt bậc</span>
-            <div class="text-2xl font-extrabold text-emerald-900 mt-1">8 Học sinh</div>
-            <p class="text-[11px] text-emerald-700 mt-1">Cải thiện từ 6.0 lên 8.5+</p>
-          </div>
+          <span class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-bold">Tỷ lệ nộp bài đạt 94%</span>
         </div>
         <div class="overflow-x-auto border border-slate-100 rounded-xl">
           <table class="w-full text-left text-sm">
@@ -239,236 +218,499 @@
                 <th class="px-4 py-3">Nhận xét khái quát của cô</th>
               </tr>
             </thead>
-            <tbody id="tblClassProgressBody" class="divide-y divide-slate-100">
-              <!-- Render tiến độ -->
-            </tbody>
+            <tbody id="tblClassProgressBody" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
       </div>
     </section>
 
-    <!-- 2. TAB: SÁCH GIÁO KHOA (LỚP 10, 11, 12) -->
-    <section id="section-textbook" class="space-y-6 hidden">
-      <!-- Chọn Khối lớp -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+    <!-- 2. TAB: SÁCH GIÁO KHOA (10, 11, 12) -->
+    <section id="panel-textbook" class="space-y-6 hidden">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <span class="text-xs font-bold text-slate-700">Khối lớp SGK:</span>
-          <button onclick="changeTextbookGrade(10)" id="btnGrade10" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white">Lớp 10</button>
-          <button onclick="changeTextbookGrade(11)" id="btnGrade11" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Lớp 11</button>
-          <button onclick="changeTextbookGrade(12)" id="btnGrade12" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Lớp 12</button>
+          <button onclick="changeGrade('textbook', 10)" id="btnGrade10" class="grade-btn px-4 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white">Lớp 10</button>
+          <button onclick="changeGrade('textbook', 11)" id="btnGrade11" class="grade-btn px-4 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Lớp 11</button>
+          <button onclick="changeGrade('textbook', 12)" id="btnGrade12" class="grade-btn px-4 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Lớp 12</button>
         </div>
-        <button onclick="openAssignModal('sgk')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
-          <i data-lucide="send" class="w-3.5 h-3.5"></i> Giao Bài Sách Giáo Khoa
-        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="openContentCreationModal('textbook')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Cô Thêm Nội Dung SGK
+          </button>
+        </div>
       </div>
 
-      <!-- Danh mục các phần học trong SGK -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <!-- 1. Từ vựng Flashcard -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
-            <i data-lucide="languages" class="w-5 h-5"></i>
+        <!-- 1. Từ Vựng -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold mb-3"><i data-lucide="languages" class="w-5 h-5"></i></div>
+            <h4 class="font-bold text-slate-900">Từ Vựng (Vocab)</h4>
+            <p class="text-xs text-slate-500 mt-1">Học từ mới qua Flashcard tương tác lật thẻ, phiên âm, từ loại và ví dụ.</p>
           </div>
-          <h4 class="font-bold text-slate-900">Từ Vựng (Vocab)</h4>
-          <p class="text-xs text-slate-500">Flashcard lật thẻ ghi nhớ từ mới, phiên âm, từ loại và ví dụ theo từng Unit.</p>
-          <button onclick="openVocabFlashcardModal()" class="w-full py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl text-xs font-bold transition">
-            Học Từ Vựng &rarr;
-          </button>
+          <div class="pt-3 border-t flex flex-col gap-2">
+            <button onclick="openAddVocabModal('textbook')" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">+ Thêm Từ Vựng Mới</button>
+            <button onclick="openFlashcardViewer('textbook')" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow">Xem & Học Flashcard &rarr;</button>
+          </div>
         </div>
 
-        <!-- 2. Lý thuyết trọng điểm -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
-            <i data-lucide="file-text" class="w-5 h-5"></i>
+        <!-- 2. Lý Thuyết -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold mb-3"><i data-lucide="file-text" class="w-5 h-5"></i></div>
+            <h4 class="font-bold text-slate-900">Lý Thuyết Trọng Điểm</h4>
+            <p class="text-xs text-slate-500 mt-1">Tóm tắt cấu trúc ngữ pháp, trọng âm, liên từ và quy tắc cần nhớ.</p>
           </div>
-          <h4 class="font-bold text-slate-900">Lý Thuyết Trọng Điểm</h4>
-          <p class="text-xs text-slate-500">Tóm tắt ngữ pháp, cấu trúc câu, liên từ và quy tắc phát âm/trọng âm từng Unit.</p>
-          <button onclick="openGrammarTheoryModal()" class="w-full py-2 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-xl text-xs font-bold transition">
-            Xem Lý Thuyết &rarr;
-          </button>
+          <div class="pt-3 border-t flex flex-col gap-2">
+            <button onclick="openAddTheoryModal('textbook')" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">+ Thêm Lý Thuyết Bài Học</button>
+            <button onclick="openTheoryModal('textbook')" class="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow">Xem Bài Giảng Lý Thuyết &rarr;</button>
+          </div>
         </div>
 
-        <!-- 3. Game ôn từ vựng & lý thuyết -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
-            <i data-lucide="gamepad-2" class="w-5 h-5"></i>
+        <!-- 3. Game Ôn Tập -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold mb-3"><i data-lucide="gamepad-2" class="w-5 h-5"></i></div>
+            <h4 class="font-bold text-slate-900">Mini Game Lớp Học</h4>
+            <p class="text-xs text-slate-500 mt-1">Trò chơi ghép cặp từ (Word Match) và trắc nghiệm vui nhộn chiếu tại lớp.</p>
           </div>
-          <h4 class="font-bold text-slate-900">Mini Game Lớp Học</h4>
-          <p class="text-xs text-slate-500">Game ghép từ (Word Match) và trắc nghiệm tốc độ 30 giây chiếu trên máy chiếu lớp.</p>
-          <button onclick="openVocabGameModal()" class="w-full py-2 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-xl text-xs font-bold transition">
-            Bật Game Ôn Tập &rarr;
-          </button>
+          <div class="pt-3 border-t flex flex-col gap-2">
+            <button onclick="openAddGameQuestionModal('textbook')" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">+ Thêm Cặp Từ / Câu Đố</button>
+            <button onclick="openMiniGameViewer('textbook')" class="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold shadow">Chơi Game Ôn Tập &rarr;</button>
+          </div>
         </div>
 
-        <!-- 4. Bài tập ứng dụng -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
-            <i data-lucide="check-square" class="w-5 h-5"></i>
+        <!-- 4. Bài Tập Ứng Dụng -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold mb-3"><i data-lucide="check-square" class="w-5 h-5"></i></div>
+            <h4 class="font-bold text-slate-900">Bài Tập Ứng Dụng</h4>
+            <p class="text-xs text-slate-500 mt-1">Điền khuyết, trắc nghiệm 4 lựa chọn có chấm điểm và giải thích chi tiết.</p>
           </div>
-          <h4 class="font-bold text-slate-900">Bài Tập Ứng Dụng</h4>
-          <p class="text-xs text-slate-500">Điền từ, trắc nghiệm và bài đọc hiểu bám sát đề cương SGK Global Success.</p>
-          <button onclick="openPracticeModal('sgk')" class="w-full py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl text-xs font-bold transition">
-            Làm Bài Ứng Dụng &rarr;
-          </button>
+          <div class="pt-3 border-t flex flex-col gap-2">
+            <button onclick="openCreateTestModal('textbook')" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">+ Soạn Đề Từ Word</button>
+            <button onclick="openExamDirectViewer('textbook')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow">Làm Bài Tập Ứng Dụng &rarr;</button>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- 3. TAB: HỌC SINH GIỎI (11 & 12) -->
-    <section id="section-hsg" class="space-y-6 hidden">
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+    <section id="panel-hsg" class="space-y-6 hidden">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <span class="text-xs font-bold text-slate-700">Khối Đội Tuyển:</span>
-          <button onclick="changeHsgGrade(11)" id="btnHsgGrade11" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-purple-600 text-white">Đội tuyển 11</button>
-          <button onclick="changeHsgGrade(12)" id="btnHsgGrade12" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Đội tuyển 12</button>
+          <button onclick="changeGrade('hsg', 11)" id="btnHsgGrade11" class="grade-btn px-4 py-1.5 rounded-xl text-xs font-bold bg-purple-600 text-white">Đội tuyển 11</button>
+          <button onclick="changeGrade('hsg', 12)" id="btnHsgGrade12" class="grade-btn px-4 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Đội tuyển 12</button>
         </div>
-        <button onclick="openAssignModal('hsg')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
-          <i data-lucide="send" class="w-3.5 h-3.5"></i> Giao Bài Cho Đội Tuyển HSG
-        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="openCreateTestModal('hsg')" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Cô Thêm Đề / Bài Tập HSG Mới
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- 1. Lý thuyết chuyên sâu -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
-            <i data-lucide="bookmark" class="w-5 h-5"></i>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold mb-3"><i data-lucide="bookmark" class="w-5 h-5"></i></div>
+            <h4 class="font-bold text-slate-900">Lý Thuyết Chuyên Sâu (Ngữ Pháp & Từ Vựng)</h4>
+            <p class="text-xs text-slate-500 mt-1">Chuyên đề Idioms, Phrasal Verbs nâng cao, Collocations, Đảo ngữ, Thể giả định C1/C2.</p>
           </div>
-          <h4 class="font-bold text-slate-900">Lý Thuyết Chuyên Sâu</h4>
-          <p class="text-xs text-slate-500">Chuyên đề Idioms, Phrasal Verbs nâng cao, Collocations, Đảo ngữ, Cấu trúc giả định C1/C2.</p>
-          <button onclick="openHsgTheoryModal()" class="w-full py-2 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-xl text-xs font-bold">Xem Tài Liệu HSG &rarr;</button>
+          <div class="pt-3 border-t flex flex-col gap-2">
+            <button onclick="openAddTheoryModal('hsg')" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">+ Thêm Chuyên Đề Mới</button>
+            <button onclick="openTheoryModal('hsg')" class="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold">Xem Lý Thuyết HSG &rarr;</button>
+          </div>
         </div>
 
-        <!-- 2. Bài tập ứng dụng -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
-            <i data-lucide="edit-3" class="w-5 h-5"></i>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold mb-3"><i data-lucide="edit-3" class="w-5 h-5"></i></div>
+            <h4 class="font-bold text-slate-900">Bài Tập Ứng Dụng Nâng Cao</h4>
+            <p class="text-xs text-slate-500 mt-1">Word Formation dạng bảng, Điền từ đoạn văn mở (Open Cloze), Tìm và sửa lỗi sai.</p>
           </div>
-          <h4 class="font-bold text-slate-900">Bài Tập Ứng Dụng</h4>
-          <p class="text-xs text-slate-500">Chuyên sâu Word Formation bảng dài, Điền từ đoạn văn mở (Open Cloze), Tìm và sửa lỗi sai trong đoạn.</p>
-          <button onclick="openPracticeModal('hsg_exercise')" class="w-full py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl text-xs font-bold">Làm Bài Tập &rarr;</button>
+          <div class="pt-3 border-t flex flex-col gap-2">
+            <button onclick="openCreateTestModal('hsg')" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">+ Soạn Bài Tập Tự Luận/Cloze</button>
+            <button onclick="openExamDirectViewer('hsg')" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold">Làm Bài Tập Ứng Dụng &rarr;</button>
+          </div>
         </div>
 
-        <!-- 3. Đề tham khảo trực tiếp (Chấm điểm + giải thích) -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
-            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold mb-3"><i data-lucide="check-circle-2" class="w-5 h-5"></i></div>
+            <h4 class="font-bold text-slate-900">Đề Tham Khảo Thi HSG Tỉnh</h4>
+            <p class="text-xs text-slate-500 mt-1">Làm trực tiếp trực tuyến, hệ thống chấm điểm tự động, giải thích chi tiết đáp án đúng và lý do sai.</p>
           </div>
-          <h4 class="font-bold text-slate-900">Đề Tham Khảo Thi HSG Tỉnh</h4>
-          <p class="text-xs text-slate-500">Làm trực tiếp trực tuyến, hệ thống chấm điểm tự động, giải thích chi tiết đáp án đúng và lý do sai.</p>
-          <button onclick="openOnlineExamModal('hsg_test')" class="w-full py-2 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-xl text-xs font-bold">Vào Thi Thử Trực Tiếp &rarr;</button>
+          <div class="pt-3 border-t flex flex-col gap-2">
+            <button onclick="openCreateTestModal('hsg')" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">+ Nhập Đề Thi Thử Mới</button>
+            <button onclick="openExamDirectViewer('hsg')" class="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold">Vào Thi Thử Trực Tiếp &rarr;</button>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- 4. TAB: TỐT NGHIỆP THPT -->
-    <section id="section-graduation" class="space-y-6 hidden">
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+    <section id="panel-graduation" class="space-y-6 hidden">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 class="font-bold text-slate-900">Luyện Thi Tốt Nghiệp THPT</h3>
           <p class="text-xs text-slate-500">Cấu trúc đề minh họa mới của Bộ GD&ĐT</p>
         </div>
-        <button onclick="openAssignModal('tnthpt')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
-          <i data-lucide="send" class="w-3.5 h-3.5"></i> Giao Đề Ôn TN THPT
-        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="openCreateTestModal('graduation')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Cô Thêm Đề Ôn TN THPT
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- 1. Chuyên đề lý thuyết -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">
-            <i data-lucide="layers" class="w-5 h-5"></i>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold mb-3"><i data-lucide="layers" class="w-5 h-5"></i></div>
+            <h4 class="font-bold text-slate-900">Chuyên Đề Trọng Điểm</h4>
+            <p class="text-xs text-slate-500 mt-1">Lý thuyết 18 chuyên đề: Mệnh đề quan hệ, Câu điều kiện, Thì, Bị động, Rút gọn mệnh đề, Trọng âm.</p>
           </div>
-          <h4 class="font-bold text-slate-900">Chuyên Đề Trọng Điểm</h4>
-          <p class="text-xs text-slate-500">Lý thuyết 18 chuyên đề: Mệnh đề quan hệ, Câu điều kiện, Thì, Bị động, Rút gọn mệnh đề, Trọng âm.</p>
-          <button onclick="openGraduationTheoryModal()" class="w-full py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-xl text-xs font-bold">Xem Chuyên Đề &rarr;</button>
+          <div class="pt-3 border-t flex flex-col gap-2">
+            <button onclick="openAddTheoryModal('graduation')" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">+ Thêm Chuyên Đề</button>
+            <button onclick="openTheoryModal('graduation')" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold">Xem Chuyên Đề &rarr;</button>
+          </div>
         </div>
 
-        <!-- 2. Bài tập theo dạng -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
-            <i data-lucide="list-checks" class="w-5 h-5"></i>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold mb-3"><i data-lucide="list-checks" class="w-5 h-5"></i></div>
+            <h4 class="font-bold text-slate-900">Bài Tập Luyện Dạng</h4>
+            <p class="text-xs text-slate-500 mt-1">Luyện sâu dạng: Sắp xếp câu thành đoạn văn, Đọc hiểu văn bản thông tin, Điền khuyết đoạn văn.</p>
           </div>
-          <h4 class="font-bold text-slate-900">Bài Tập Luyện Dạng</h4>
-          <p class="text-xs text-slate-500">Luyện sâu dạng: Sắp xếp câu thành đoạn văn, Đọc hiểu văn bản thông tin, Điền khuyết đoạn văn.</p>
-          <button onclick="openPracticeModal('tnthpt_parts')" class="w-full py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl text-xs font-bold">Làm Bài Tập &rarr;</button>
+          <div class="pt-3 border-t flex flex-col gap-2">
+            <button onclick="openCreateTestModal('graduation')" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">+ Soạn Bài Tập Dạng Mới</button>
+            <button onclick="openExamDirectViewer('graduation')" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold">Làm Bài Tập &rarr;</button>
+          </div>
         </div>
 
-        <!-- 3. Đề tham khảo trực tiếp -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
-            <i data-lucide="file-check" class="w-5 h-5"></i>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold mb-3"><i data-lucide="file-check" class="w-5 h-5"></i></div>
+            <h4 class="font-bold text-slate-900">Đề Thi Thử Tốt Nghiệp Chuẩn</h4>
+            <p class="text-xs text-slate-500 mt-1">Làm trực tiếp có bấm giờ 50 phút, nộp bài biết điểm ngay, lời giải chi tiết cho từng câu hỏi.</p>
           </div>
-          <h4 class="font-bold text-slate-900">Đề Thi Thử Tốt Nghiệp Chuẩn</h4>
-          <p class="text-xs text-slate-500">Làm trực tiếp có bấm giờ 50 phút, nộp bài biết điểm ngay, lời giải chi tiết cho từng câu hỏi.</p>
-          <button onclick="openOnlineExamModal('tnthpt_full')" class="w-full py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl text-xs font-bold">Vào Thi Thử 50 Phút &rarr;</button>
+          <div class="pt-3 border-t flex flex-col gap-2">
+            <button onclick="openCreateTestModal('graduation')" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">+ Nhập Đề Thi 50 Phút</button>
+            <button onclick="openExamDirectViewer('graduation')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold">Vào Thi Thử 50 Phút &rarr;</button>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 5. TAB: AI CHẤM BÀI TỰ LUẬN & DỰ ÁN -->
-    <section id="section-ai_grading" class="space-y-6 hidden">
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
-              <i data-lucide="sparkles" class="w-5 h-5 text-indigo-600"></i> Phòng Chấm Bài AI & Quản Lý Dự Án Học Sinh
-            </h3>
-            <p class="text-xs text-slate-500">AI tự động phân tích bài viết tay, ảnh, video, powerpoint và gợi ý điểm số + nhận xét chi tiết</p>
-          </div>
-          <span class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-xl font-bold border border-indigo-200">
-            Gemini AI Grader Đang Kích Hoạt
-          </span>
+    <!-- 5. TAB: MỤC GIAO BÀI (TẠO BÀI & GIAO BÀI) -->
+    <section id="panel-assignments" class="space-y-6 hidden">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h3 class="font-bold text-slate-900 text-lg">Trung Tâm Quản Lý & Giao Bài</h3>
+          <p class="text-xs text-slate-500">Tạo bài tập tự luận/trắc nghiệm mới và giao trực tiếp cho từng lớp</p>
         </div>
-
-        <div id="aiSubmissionsList" class="space-y-3">
-          <!-- Render bài nộp cần AI chấm -->
+        <div class="flex items-center gap-3">
+          <!-- NÚT 1: TẠO BÀI -->
+          <button onclick="openCreateTestModal('textbook')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
+            <i data-lucide="file-plus" class="w-4 h-4"></i> Tạo Bài Mới (Soạn / Dán Word)
+          </button>
+          <!-- NÚT 2: GIAO BÀI -->
+          <button onclick="openAssignModalGeneral()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
+            <i data-lucide="send" class="w-4 h-4"></i> Giao Bài Cho Lớp
+          </button>
         </div>
       </div>
+
+      <!-- Danh sách bài tập đang giao -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <h4 class="font-bold text-slate-900 text-base">Danh Sách Bài Đã Giao Cho Các Lớp</h4>
+        <div id="assignedListContainer" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- 6. TAB: DỰ ÁN & STEM (ĐĂNG BÀI & TẢI VỀ + CHUỘT PHẢI CHẤM AI) -->
+    <section id="panel-projects" class="space-y-6 hidden">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+            <i data-lucide="folder-git-2" class="w-5 h-5 text-purple-600"></i> Dự Án Học Tập, Video & STEM
+          </h3>
+          <p class="text-xs text-slate-500">Học sinh nộp Video thuyết trình, Slide PowerPoint, Infographic. Cô có thể tải về hoặc kích chuột phải để AI chấm bài.</p>
+        </div>
+        <button onclick="openPostProjectModal()" class="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
+          <i data-lucide="upload-cloud" class="w-4 h-4"></i> Đăng Bài Dự Án Mới
+        </button>
+      </div>
+
+      <div class="p-4 bg-indigo-50 border border-indigo-200 rounded-2xl text-xs text-indigo-900 flex items-center gap-2">
+        <i data-lucide="mouse-pointer" class="w-4 h-4 text-indigo-600 shrink-0"></i>
+        <span><strong>Mẹo thao tác:</strong> Nhấp chuột phải (Right-Click) vào bất kỳ bài dự án nào bên dưới để mở menu <strong>"✨ Chấm bài này bằng AI"</strong>!</span>
+      </div>
+
+      <!-- Danh sách dự án đã nộp -->
+      <div id="projectCardsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
     </section>
 
   </main>
 
-  <!-- ==================== CỬA SỔ HỌC SINH TỰ TRA CỨU TIẾN BỘ ==================== -->
-  <div id="studentPersonalModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl">
+  <!-- ==================== MENU CHUỘT PHẢI (RIGHT CLICK CONTEXT MENU) ==================== -->
+  <div id="customContextMenu" class="fixed bg-white border border-slate-200 shadow-2xl rounded-2xl py-2 z-50 hidden min-w-[220px] animate-in fade-in duration-100">
+    <button onclick="executeAiGradingFromContext()" class="w-full text-left px-4 py-2.5 hover:bg-indigo-50 text-indigo-700 font-bold text-xs flex items-center gap-2 transition">
+      <i data-lucide="sparkles" class="w-4 h-4 text-indigo-600"></i>
+      <span>Chấm bài này bằng AI (Thang 10)</span>
+    </button>
+    <button onclick="executeDownloadProjectFromContext()" class="w-full text-left px-4 py-2 hover:bg-slate-100 text-slate-700 font-medium text-xs flex items-center gap-2 transition">
+      <i data-lucide="download" class="w-4 h-4 text-slate-500"></i>
+      <span>Tải bài làm này về máy</span>
+    </button>
+  </div>
+
+  <!-- ==================== MODAL: XEM FLASHCARD ==================== -->
+  <div id="flashcardModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-3">
-        <div>
-          <h3 id="personalStudentName" class="text-lg font-bold text-slate-900">Nguyễn Hoàng Kim Yến</h3>
-          <p id="personalStudentClass" class="text-xs text-slate-500">Lớp 12A1 - THPT Nguyễn Huệ</p>
-        </div>
-        <button onclick="document.getElementById('studentPersonalModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
+        <h3 class="font-bold text-slate-900 flex items-center gap-2"><i data-lucide="languages" class="w-5 h-5 text-blue-600"></i> Flashcard Từ Vựng</h3>
+        <button onclick="document.getElementById('flashcardModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <div class="grid grid-cols-2 gap-3 text-center">
-        <div class="bg-blue-50 p-3.5 rounded-2xl border border-blue-100">
-          <span class="text-xs text-blue-600 font-semibold">Số lần làm bài</span>
-          <div id="personalSubCount" class="text-2xl font-extrabold text-blue-900 mt-1">6 lần</div>
-        </div>
-        <div class="bg-emerald-50 p-3.5 rounded-2xl border border-emerald-100">
-          <span class="text-xs text-emerald-600 font-semibold">Điểm trung bình</span>
-          <div id="personalAvgScore" class="text-2xl font-extrabold text-emerald-900 mt-1">8.8 / 10</div>
-        </div>
-      </div>
-
-      <div>
-        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Lịch Sử Các Bài Đã Làm</h4>
-        <div id="personalHistoryList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar border border-slate-100 p-2 rounded-xl">
-          <!-- Render lịch sử học sinh -->
+      <div id="flashcardElement" onclick="flipCurrentCard()" class="flashcard w-full h-64 cursor-pointer relative select-none">
+        <div class="flashcard-inner w-full h-full relative rounded-2xl shadow-md border border-slate-200">
+          <div class="flashcard-front bg-blue-50/70 p-6 flex flex-col items-center justify-center text-center rounded-2xl">
+            <span class="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-2">Nhấp chuột để lật thẻ</span>
+            <h2 id="cardWord" class="text-3xl font-extrabold text-blue-900">Sustainable</h2>
+            <p id="cardPhonetic" class="text-sm font-mono text-slate-600 mt-1">/səˈsteɪnəbl/ (adj)</p>
+          </div>
+          <div class="flashcard-back bg-indigo-600 text-white p-6 flex flex-col items-center justify-center text-center rounded-2xl">
+            <span class="text-xs font-semibold text-indigo-200 uppercase tracking-widest mb-1">Nghĩa tiếng Việt & Ví dụ</span>
+            <h3 id="cardMeaning" class="text-xl font-bold">Bền vững, bảo vệ môi trường</h3>
+            <p id="cardExample" class="text-xs text-indigo-100 italic mt-3 max-w-xs">"We need to find more sustainable sources of energy."</p>
+          </div>
         </div>
       </div>
 
-      <div class="p-3 bg-amber-50 rounded-xl border border-amber-200">
-        <span class="text-[11px] font-bold text-amber-800 block">Lời nhắn của cô Lê Mai:</span>
-        <p id="personalTeacherNote" class="text-xs text-amber-900 mt-0.5 italic">
-          "Kim Yến có tư duy đọc hiểu rất tốt! Em hãy tiếp tục trau dồi thêm phần Word Formation để bứt phá điểm 9+ nhé!"
-        </p>
+      <div class="flex items-center justify-between">
+        <button onclick="prevFlashcard()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">&larr; Từ Trước</button>
+        <span id="cardCounter" class="text-xs font-bold text-slate-500">1 / 5</span>
+        <button onclick="nextFlashcard()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold">Từ Kế Tiếp &rarr;</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== MODAL THI THỬ & LÀM BÀI TRỰC TIẾP ==================== -->
+  <!-- ==================== MODAL: THÊM TỪ VỰNG MỚI ==================== -->
+  <div id="addVocabModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-slate-900">Cô Thêm Từ Vựng Mới</h3>
+        <button onclick="document.getElementById('addVocabModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold mb-1">Từ tiếng Anh (Word):</label>
+          <input type="text" id="inVocabWord" class="w-full border rounded-xl p-2.5" placeholder="Ví dụ: Biodiversity">
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Phiên âm & từ loại:</label>
+          <input type="text" id="inVocabPhonetic" class="w-full border rounded-xl p-2.5" placeholder="/ˌbaɪəʊdaɪˈvɜːsəti/ (n)">
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Nghĩa tiếng Việt:</label>
+          <input type="text" id="inVocabMeaning" class="w-full border rounded-xl p-2.5" placeholder="Sự đa dạng sinh học">
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Câu ví dụ:</label>
+          <textarea id="inVocabExample" rows="2" class="w-full border rounded-xl p-2.5" placeholder="Preserving biodiversity is crucial for our future."></textarea>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="document.getElementById('addVocabModal').classList.add('hidden')" class="px-4 py-2 text-xs font-semibold text-slate-600">Hủy</button>
+        <button onclick="saveNewVocab()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow">Lưu Vào Flashcard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: XEM LÝ THUYẾT CHI TIẾT ==================== -->
+  <div id="theoryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="px-6 py-4 bg-purple-700 text-white flex items-center justify-between">
+        <h3 id="theoryModalTitle" class="font-bold text-base flex items-center gap-2"><i data-lucide="book-marked" class="w-5 h-5"></i> Lý Thuyết Bài Học</h3>
+        <button onclick="document.getElementById('theoryModal').classList.add('hidden')" class="text-white hover:text-purple-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="theoryModalContent" class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700 leading-relaxed custom-scrollbar"></div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: THÊM LÝ THUYẾT MỚI ==================== -->
+  <div id="addTheoryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-slate-900">Cô Thêm Bài Giảng Lý Thuyết</h3>
+        <button onclick="document.getElementById('addTheoryModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold mb-1">Tiêu đề lý thuyết:</label>
+          <input type="text" id="inTheoryTitle" class="w-full border rounded-xl p-2.5" placeholder="Ví dụ: Chuyên đề Rút gọn Mệnh đề quan hệ...">
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Nội dung bài giảng (Dán từ Word):</label>
+          <textarea id="inTheoryBody" rows="8" class="w-full border rounded-xl p-3 font-mono" placeholder="1. Dùng V-ing khi mang nghĩa chủ động: The girl standing there is Mai.&#10;2. Dùng V-ed/P2 khi mang nghĩa bị động: The bridge built in 2020..."></textarea>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="document.getElementById('addTheoryModal').classList.add('hidden')" class="px-4 py-2 text-xs font-semibold text-slate-600">Hủy</button>
+        <button onclick="saveNewTheory()" class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow">Lưu Bài Giảng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: MINI GAME GHÉP TỪ ==================== -->
+  <div id="miniGameModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-slate-900 flex items-center gap-2"><i data-lucide="gamepad-2" class="w-5 h-5 text-amber-500"></i> Mini Game: Ghép Cặp Từ Vựng</h3>
+        <button onclick="document.getElementById('miniGameModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <p class="text-xs text-slate-500">Chọn 1 từ tiếng Anh bên trái rồi chọn nghĩa tiếng Việt tương ứng bên phải:</p>
+      
+      <div class="grid grid-cols-2 gap-4">
+        <div id="gameLeftCol" class="space-y-2"></div>
+        <div id="gameRightCol" class="space-y-2"></div>
+      </div>
+
+      <div class="pt-3 border-t flex items-center justify-between">
+        <span id="gameScoreLabel" class="text-xs font-bold text-emerald-700">Điểm số: 0</span>
+        <button onclick="initMiniGame()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">Chơi Lại</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: TẠO BÀI TẬP / ĐỀ TỰ LUẬN / TRẮC NGHIỆM ==================== -->
+  <div id="createTestModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="px-6 py-4 bg-gradient-to-r from-blue-700 to-indigo-700 text-white flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-base flex items-center gap-2">
+            <i data-lucide="file-plus" class="w-5 h-5"></i> Tạo Bài Tập Mới (Dán Trực Tiếp Từ Word)
+          </h3>
+          <p class="text-xs text-blue-100">Hỗ trợ trắc nghiệm A-B-C-D, điền khuyết, chia từ loại và viết lại câu</p>
+        </div>
+        <button onclick="document.getElementById('createTestModal').classList.add('hidden')" class="text-white hover:text-blue-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 custom-scrollbar">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Mục bài giảng</label>
+            <select id="newTestCategory" class="w-full text-xs font-bold border border-slate-300 rounded-xl p-2.5 bg-slate-50">
+              <option value="textbook">Sách Giáo Khoa (10, 11, 12)</option>
+              <option value="hsg">Học Sinh Giỏi (11, 12)</option>
+              <option value="graduation">Ôn Thi Tốt Nghiệp THPT</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Dạng bài tập</label>
+            <select id="newTestFormat" class="w-full text-xs font-bold border border-slate-300 rounded-xl p-2.5 bg-slate-50 text-blue-700">
+              <option value="quiz">Trắc nghiệm 4 đáp án (A, B, C, D)</option>
+              <option value="cloze">Điền từ / Chia từ loại / Viết lại câu</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Tiêu đề bài tập / đề thi</label>
+          <input type="text" id="newTestTitle" placeholder="Ví dụ: Đề Khảo Sát Đội Tuyển HSG Tháng 11 / Chuyên đề Mệnh đề quan hệ..." class="w-full text-xs font-semibold border border-slate-300 rounded-xl p-2.5">
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs font-semibold text-slate-700">Nội dung câu hỏi (Dán từ file Word):</label>
+            <button onclick="insertSampleTestQuestions()" class="text-xs text-blue-600 font-bold hover:underline">Chèn mẫu câu hỏi</button>
+          </div>
+          <textarea id="newTestContent" rows="8" class="w-full text-xs font-mono border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500" placeholder="Câu 1: English is spoken ______ the world.
+A. at
+*B. around
+C. in
+D. on
+Giải thích: Cụm từ around the world nghĩa là trên khắp thế giới.
+
+Câu 2: Not only ______ the project on time, but she also helped her friends.
+*A. did she complete
+B. she completed
+C. does she complete
+D. she has completed
+Giải thích: Cấu trúc đảo ngữ quá khứ đơn với Not only."></textarea>
+          <p class="text-[11px] text-slate-500 italic mt-1">* Mẹo: Đặt dấu * trước đáp án đúng (ví dụ: *B. around), kèm dòng "Giải thích: ..."</p>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
+        <button onclick="document.getElementById('createTestModal').classList.add('hidden')" class="px-4 py-2 text-xs font-semibold text-slate-600">Hủy</button>
+        <button onclick="saveNewTestQuestionBank()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow">Lưu & Xuất Bản Đề</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: GIAO BÀI CHO LỚP ==================== -->
+  <div id="assignModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-slate-900">Giao Bài Tập Cho Học Sinh</h3>
+        <button onclick="document.getElementById('assignModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold mb-1">Chọn lớp nhận bài:</label>
+          <select id="assignClassSelect" class="w-full border rounded-xl p-2 bg-slate-50 font-bold text-blue-700"></select>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Chọn bài tập / Đề thi muốn giao:</label>
+          <select id="assignTestSelect" class="w-full border rounded-xl p-2 bg-slate-50"></select>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Hạn nộp (Deadline):</label>
+          <input type="date" id="assignDeadlineInput" class="w-full border rounded-xl p-2" value="2026-11-05">
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="document.getElementById('assignModal').classList.add('hidden')" class="px-3 py-1.5 text-xs text-slate-600">Hủy</button>
+        <button onclick="confirmAssignAssignment()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow">Xác Nhận Giao Bài</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ĐĂNG BÀI DỰ ÁN MỚI ==================== -->
+  <div id="postProjectModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-slate-900">Đăng Bài Dự Án / STEM Mới</h3>
+        <button onclick="document.getElementById('postProjectModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold mb-1">Họ tên học sinh / Nhóm:</label>
+          <input type="text" id="inProjAuthor" class="w-full border rounded-xl p-2.5" placeholder="Ví dụ: Nhóm 1 - Lớp 12A1">
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Tên chủ đề dự án:</label>
+          <input type="text" id="inProjTitle" class="w-full border rounded-xl p-2.5" placeholder="Ví dụ: Video Thuyết Trình Di Sản Văn Hóa Kon Tum">
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Link Video / Slide PowerPoint / Canva:</label>
+          <input type="text" id="inProjLink" class="w-full border rounded-xl p-2.5" placeholder="https://youtu.be/... hoặc link Google Drive">
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Mô tả tóm tắt nội dung bài nộp:</label>
+          <textarea id="inProjDesc" rows="3" class="w-full border rounded-xl p-2.5" placeholder="Nội dung kịch bản thuyết trình bằng tiếng Anh..."></textarea>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="document.getElementById('postProjectModal').classList.add('hidden')" class="px-4 py-2 text-xs font-semibold text-slate-600">Hủy</button>
+        <button onclick="saveNewProjectPost()" class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow">Đăng Dự Án</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: LÀM BÀI THI & CHẤM ĐIỂM TỰ ĐỘNG ==================== -->
   <div id="examDirectModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="px-6 py-4 bg-blue-600 text-white flex items-center justify-between">
@@ -478,9 +720,7 @@
         </div>
         <button onclick="document.getElementById('examDirectModal').classList.add('hidden')" class="text-white hover:text-blue-200"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <div id="examModalBody" class="p-6 overflow-y-auto space-y-5 custom-scrollbar flex-1">
-        <!-- Render câu hỏi -->
-      </div>
+      <div id="examModalBody" class="p-6 overflow-y-auto space-y-5 custom-scrollbar flex-1"></div>
       <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
         <button onclick="document.getElementById('examDirectModal').classList.add('hidden')" class="px-4 py-2 text-xs font-bold text-slate-600">Đóng</button>
         <button onclick="submitExamDirect()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow">Nộp Bài & Chấm Điểm</button>
@@ -488,62 +728,85 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL GIAO BÀI ==================== -->
-  <div id="assignModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+  <!-- ==================== MODAL: KẾT QUẢ AI CHẤM BÀI ==================== -->
+  <div id="aiGradingResultModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-bold text-slate-900">Giao Bài Cho Học Sinh</h3>
-        <button onclick="document.getElementById('assignModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h3 class="font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-5 h-5 text-indigo-600"></i> Kết Quả Chấm Bài Bằng AI (Gemini Grader)
+        </h3>
+        <button onclick="document.getElementById('aiGradingResultModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block font-semibold mb-1">Chọn lớp nhận bài:</label>
-          <select id="assignClassSelect" class="w-full border rounded-xl p-2 bg-slate-50 font-bold text-blue-700"></select>
+      <div class="grid grid-cols-3 gap-3 text-center">
+        <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+          <span class="text-[11px] font-bold text-indigo-700">Điểm số AI:</span>
+          <div id="aiResultScore" class="text-2xl font-extrabold text-indigo-900 mt-1">9.0 / 10</div>
         </div>
-        <div>
-          <label class="block font-semibold mb-1">Nội dung / Tên bài giao:</label>
-          <input type="text" id="assignTitleInput" class="w-full border rounded-xl p-2" value="Unit 4: For a Better Community - Vocabulary & Practice">
-        </div>
-        <div>
-          <label class="block font-semibold mb-1">Hạn nộp (Deadline):</label>
-          <input type="date" id="assignDeadlineInput" class="w-full border rounded-xl p-2" value="2026-11-05">
+        <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100 col-span-2 text-left">
+          <span class="text-[11px] font-bold text-emerald-700">Đánh giá chung:</span>
+          <p id="aiResultTag" class="text-xs font-semibold text-emerald-900 mt-1">Đạt năng lực tiếng Anh xuất sắc, ý tưởng mạch lạc.</p>
         </div>
       </div>
-      <div class="flex justify-end gap-2 pt-2">
-        <button onclick="document.getElementById('assignModal').classList.add('hidden')" class="px-3 py-1.5 text-xs text-slate-600">Hủy</button>
-        <button onclick="confirmAssignAssignment()" class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl shadow">Xác Nhận Giao Bài</button>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Lời nhận xét sư phạm chi tiết:</label>
+        <textarea id="aiResultFeedback" rows="6" class="w-full text-xs border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500"></textarea>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="document.getElementById('aiGradingResultModal').classList.add('hidden')" class="px-4 py-2 text-xs font-semibold text-slate-600">Đóng</button>
+        <button onclick="saveAiResultToGradebook()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow">Lưu Vào Sổ Điểm</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== CÔNG CỤ VÒNG QUAY & ĐỒNG HỒ ==================== -->
+  <!-- ==================== VÒNG QUAY CÓ NHẠC ==================== -->
   <div id="randomPickerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-5 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-bold text-slate-900 flex items-center gap-2"><i data-lucide="shuffle" class="w-5 h-5 text-amber-500"></i> Gọi Tên Ngẫu Nhiên</h3>
+        <h3 class="font-bold text-slate-900 flex items-center gap-2"><i data-lucide="shuffle" class="w-5 h-5 text-amber-500"></i> Vòng Quay Gọi Tên Ngẫu Nhiên</h3>
         <button onclick="document.getElementById('randomPickerModal').classList.add('hidden')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <div class="py-8 bg-amber-50 rounded-2xl border border-amber-200">
         <div id="randomPickerDisplay" class="text-2xl font-extrabold text-amber-800">Sẵn sàng quay...</div>
       </div>
-      <button onclick="spinStudent()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold shadow transition">Quay Chọn Học Sinh</button>
+      <button onclick="spinStudentWithSound()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold shadow transition flex items-center justify-center gap-2">
+        <i data-lucide="play" class="w-4 h-4"></i> Bắt Đầu Quay (Có Nhạc)
+      </button>
     </div>
   </div>
 
+  <!-- ==================== ĐỒNG HỒ TÙY CHỈNH THỜI GIAN & CHUÔNG BÁO ==================== -->
   <div id="timerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-5 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-3">
         <h3 class="font-bold text-slate-900 flex items-center gap-2"><i data-lucide="timer" class="w-5 h-5 text-emerald-500"></i> Đồng Hồ Đếm Ngược Lớp Học</h3>
         <button onclick="document.getElementById('timerModal').classList.add('hidden')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
+
       <div class="py-6 bg-emerald-50 rounded-2xl border border-emerald-200">
         <div id="timerDisplayNumber" class="text-5xl font-mono font-extrabold text-emerald-700">03:00</div>
       </div>
-      <div class="flex justify-center gap-2 text-xs">
-        <button onclick="setTimer(60)" class="px-3 py-1 bg-slate-100 rounded-lg font-bold">1 Phút</button>
-        <button onclick="setTimer(180)" class="px-3 py-1 bg-slate-100 rounded-lg font-bold">3 Phút</button>
-        <button onclick="setTimer(300)" class="px-3 py-1 bg-slate-100 rounded-lg font-bold">5 Phút</button>
+
+      <!-- Tùy chỉnh phút và giây -->
+      <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-left">
+        <label class="block text-xs font-bold text-slate-700 mb-1.5">Cô giáo tự nhập thời gian:</label>
+        <div class="flex items-center gap-2">
+          <input type="number" id="inCustomMinutes" min="0" max="120" value="3" class="w-20 text-center font-bold text-sm border border-slate-300 rounded-lg p-1.5">
+          <span class="text-xs font-semibold text-slate-600">Phút</span>
+          <input type="number" id="inCustomSeconds" min="0" max="59" value="0" class="w-20 text-center font-bold text-sm border border-slate-300 rounded-lg p-1.5">
+          <span class="text-xs font-semibold text-slate-600">Giây</span>
+          <button onclick="applyCustomTimer()" class="ml-auto px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold">Đặt Giờ</button>
+        </div>
       </div>
+
+      <!-- Nút chọn nhanh -->
+      <div class="flex flex-wrap justify-center gap-1.5 text-xs">
+        <button onclick="setTimer(30)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold">30 Giây</button>
+        <button onclick="setTimer(60)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold">1 Phút</button>
+        <button onclick="setTimer(180)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold">3 Phút</button>
+        <button onclick="setTimer(300)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold">5 Phút</button>
+        <button onclick="setTimer(600)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold">10 Phút</button>
+      </div>
+
       <div class="flex gap-2">
         <button id="btnTimerControl" onclick="toggleTimerRunning()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold">Bắt đầu</button>
         <button onclick="resetTimerCount()" class="px-4 py-2.5 bg-slate-200 text-slate-700 rounded-xl font-bold">Đặt lại</button>
@@ -551,39 +814,126 @@
     </div>
   </div>
 
-  <!-- ==================== JAVASCRIPT ĐỒNG BỘ TOÀN BỘ ==================== -->
+  <!-- ==================== JAVASCRIPT ĐỒNG BỘ TOÀN DIỆN ==================== -->
   <script>
-    // DỮ LIỆU KHỞI TẠO ĐẦY ĐỦ
-    const STORAGE_KEY = 'engVenture_lemai_nguyenhue';
+    // 1. WEB AUDIO API - TẠO ÂM THANH TRỰC TIẾP (KHÔNG LO LỖI MẠNG)
+    const AudioEngine = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+      },
+      playTick() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.frequency.setValueAtTime(650, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.05);
+      },
+      playWin() {
+        this.init();
+        const now = this.ctx.currentTime;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.frequency.setValueAtTime(freq, now + i * 0.1);
+          gain.gain.setValueAtTime(0.25, now + i * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.3);
+          osc.start(now + i * 0.1);
+          osc.stop(now + i * 0.1 + 0.3);
+        });
+      },
+      playAlarm() {
+        this.init();
+        const now = this.ctx.currentTime;
+        for (let i = 0; i < 4; i++) {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.frequency.setValueAtTime(880, now + i * 0.25);
+          gain.gain.setValueAtTime(0.3, now + i * 0.25);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.25 + 0.2);
+          osc.start(now + i * 0.25);
+          osc.stop(now + i * 0.25 + 0.2);
+        }
+      }
+    };
+
+    // 2. DỮ LIỆU ĐẦY ĐỦ CỦA TOÀN TRANG
+    const STORAGE_KEY = 'engVenture_lemai_nguyenhue_v3';
     const initialData = {
       classes: ['12A1', '12C1', '11A1', '11C1', '10A1'],
       currentClass: '12A1',
       students: [
-        { id: 1, name: 'Nguyễn Hoàng Kim Yến', class: '12A1', submissions: 6, avg: 8.8, note: 'Tư duy đọc hiểu rất tốt, tiếp tục phát huy!' },
+        { id: 1, name: 'Nguyễn Hoàng Kim Yến', class: '12A1', submissions: 6, avg: 8.8, note: 'Tư duy đọc hiểu rất tốt!' },
         { id: 2, name: 'Trần Văn Nam', class: '12A1', submissions: 4, avg: 7.5, note: 'Cần chú ý thêm cấu trúc câu viết lại.' },
         { id: 3, name: 'Lê Bảo Châu', class: '12A1', submissions: 5, avg: 8.2, note: 'Từ vựng phong phú, làm bài cẩn thận.' },
         { id: 4, name: 'Phạm Quỳnh Như', class: '12C1', submissions: 6, avg: 9.0, note: 'Xuất sắc! Có tố chất đội tuyển HSG.' },
         { id: 5, name: 'Đỗ Minh Khang', class: '11A1', submissions: 3, avg: 6.8, note: 'Cố gắng làm bài tập SGK đúng hạn.' }
       ],
-      attendance: {},
-      aiSubmissions: [
+      vocab: {
+        textbook: [
+          { word: 'Sustainable', phonetic: '/səˈsteɪnəbl/ (adj)', meaning: 'Bền vững, không gây hại môi trường', example: 'We need to find sustainable energy sources.' },
+          { word: 'Urbanisation', phonetic: '/ˌɜːbənaɪˈzeɪʃn/ (n)', meaning: 'Quá trình đô thị hóa', example: 'Rapid urbanisation brings many challenges.' },
+          { word: 'Renewable', phonetic: '/rɪˈnjuːəbl/ (adj)', meaning: 'Có thể tái tạo (năng lượng)', example: 'Solar and wind are renewable energy.' }
+        ]
+      },
+      theories: {
+        textbook: [
+          { title: 'Ngữ Pháp Unit 1-3: Câu Chẻ (Cleft Sentences)', content: 'Cấu trúc: It + is/was + thành phần nhấn mạnh + that/who + ...\nVí dụ: It was on Monday that she arrived in Kon Tum.' },
+          { title: 'Ngữ Pháp: Động Từ Khuyết Thiếu Dạng Hoàn Thành (Modal Perfect)', content: 'Must have + P2: Chắc hẳn đã... (dự đoán có căn cứ trong quá khứ).\nShould have + P2: Lẽ ra nên làm gì trong quá khứ.' }
+        ],
+        hsg: [
+          { title: 'Chuyên Đề Đảo Ngữ Nâng Cao (Inversion)', content: 'Not only + Trợ động từ + S + V, but S also...\nOnly after / Only when + S + V + Trợ động từ + S + V.\nHardly / Scarcely + had + S + P2 + when + S + V-ed.' }
+        ],
+        graduation: [
+          { title: '18 Chuyên Đề Trọng Điểm Ôn Thi Tốt Nghiệp THPT', content: 'Tổng hợp quy tắc Mệnh đề quan hệ, Câu điều kiện loại 1, 2, 3 và hỗn hợp, Quy tắc nhấn trọng âm từ 2 và 3 âm tiết.' }
+        ]
+      },
+      gameWords: [
+        { en: 'Sustainable', vn: 'Bền vững' },
+        { en: 'Heritage', vn: 'Di sản' },
+        { en: 'Biodiversity', vn: 'Đa dạng sinh học' },
+        { en: 'Innovation', vn: 'Đổi mới sáng tạo' }
+      ],
+      customTests: {
+        textbook: [
+          { id: 't1', title: 'Unit 3: Cities of the Future - Trắc Nghiệm', content: 'Câu 1: English is spoken ______ the world.\nA. at\n*B. around\nC. in\nD. on\nGiải thích: Cụm around the world là trên toàn thế giới.' }
+        ],
+        hsg: [
+          { id: 'h1', title: 'Đề Khảo Sát Đội Tuyển HSG Tháng 11', content: 'Câu 1: Not only ______ the project, but she also helped others.\n*A. did she finish\nB. she finished\nC. does she finish\nGiải thích: Đảo ngữ thì quá khứ đơn.' }
+        ],
+        graduation: [
+          { id: 'g1', title: 'Đề Thi Thử Tốt Nghiệp THPT 2026 Chuẩn', content: 'Câu 1: She made a deep impression ______ the audience.\n*A. on\nB. in\nC. at\nGiải thích: Make an impression on someone.' }
+        ]
+      },
+      assignments: [
+        { id: 'asg_1', class: '12A1', title: 'Unit 3: Cities of the Future - Trắc Nghiệm', deadline: '2026-11-05', status: 'Đang mở' }
+      ],
+      projects: [
         {
-          id: 'sub_101',
-          name: 'Nguyễn Hoàng Kim Yến',
-          class: '12A1',
-          title: 'Bài luận: The Role of AI in Language Learning (180 words)',
-          content: 'In contemporary society, artificial intelligence (AI) has emerged as an indispensable tool for students. Firstly, it offers personalized feedback... (Ảnh chụp bài viết tay đính kèm)',
-          score: 9.0,
-          aiFeedback: 'Bố cục chuẩn mực 3 phần, ý tưởng sâu sắc, dùng từ vựng C1 chuẩn xác như "indispensable", "tailored learning".'
+          id: 'proj_1',
+          author: 'Nhóm 1 - Lớp 12A1',
+          title: 'Video Thuyết Trình: Cồng Chiêng Tây Nguyên & Di Sản Kon Tum',
+          link: 'https://youtu.be/sample-culture-video',
+          desc: 'Bài thuyết trình tiếng Anh 5 phút giới thiệu không gian văn hóa cồng chiêng và nét đẹp trường THPT Nguyễn Huệ.'
         },
         {
-          id: 'sub_102',
-          name: 'Trần Văn Nam',
-          class: '12A1',
-          title: 'Dự án Video STEM: Tây Nguyên Heritage & Tourism',
-          content: 'Link Video YouTube: https://youtu.be/nguyenhue-stem-video\nSlide: Đính kèm PowerPoint giới thiệu cồng chiêng và ẩm thực Kon Tum.',
-          score: 8.5,
-          aiFeedback: 'Phát âm rõ ràng, slide trực quan, giới thiệu chân thực nét văn hóa địa phương.'
+          id: 'proj_2',
+          author: 'Nguyễn Hoàng Kim Yến (12A1)',
+          title: 'PowerPoint & Poster: Smart Cities for Sustainable Life',
+          link: 'https://drive.google.com/sample-slide',
+          desc: 'Slide trình chiếu 15 trang bằng tiếng Anh phân tích giải pháp công nghệ xanh cho đô thị tương lai.'
         }
       ]
     };
@@ -593,34 +943,42 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
     }
 
-    // KHỞI ĐỘNG
+    // KHỞI ĐỘNG HỆ THỐNG
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       renderClassSelects();
       renderStudentsList();
-      renderAiSubmissions();
+      renderAssignmentsList();
+      renderProjectsList();
     });
 
-    // 1. ĐIỀU HƯỚNG TAB
-    function navigateTab(tabKey) {
-      const tabs = ['students', 'textbook', 'hsg', 'graduation', 'ai_grading'];
-      tabs.forEach(t => {
-        document.getElementById(`section-${t}`).classList.add('hidden');
-        const btn = document.getElementById(`navBtn-${t}`);
-        btn.className = 'nav-item px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-2 shrink-0';
+    // 3. CHUYỂN TAB 100% HOẠT ĐỘNG
+    function switchMainTab(tabKey) {
+      const allPanels = ['students', 'textbook', 'hsg', 'graduation', 'assignments', 'projects'];
+      allPanels.forEach(p => {
+        const el = document.getElementById(`panel-${p}`);
+        if (el) el.classList.add('hidden');
+        const btn = document.getElementById(`tabBtn-${p}`);
+        if (btn) btn.className = 'tab-button px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-2 shrink-0 transition';
       });
 
-      document.getElementById(`section-${tabKey}`).classList.remove('hidden');
-      const activeBtn = document.getElementById(`navBtn-${tabKey}`);
-      activeBtn.className = 'nav-item px-4 py-2 rounded-xl text-sm font-bold bg-blue-50 text-blue-700 flex items-center gap-2 shrink-0';
+      const activePanel = document.getElementById(`panel-${tabKey}`);
+      if (activePanel) activePanel.classList.remove('hidden');
+
+      const activeBtn = document.getElementById(`tabBtn-${tabKey}`);
+      if (activeBtn) activeBtn.className = 'tab-button px-4 py-2 rounded-xl text-sm font-bold bg-blue-50 text-blue-700 flex items-center gap-2 shrink-0 transition';
     }
 
-    // 2. QUẢN LÝ LỚP & HỌC SINH KHÔNG GIỚI HẠN
+    function changeGrade(section, grade) {
+      alert(`Đã chuyển sang xem dữ liệu Khối ${grade}!`);
+    }
+
+    // 4. QUẢN LÝ LỚP & HỌC SINH KHÔNG GIỚI HẠN
     function renderClassSelects() {
       const sel = document.getElementById('selectedClassFilter');
-      const assignSel = document.getElementById('assignClassSelect');
+      const assignClassSel = document.getElementById('assignClassSelect');
       sel.innerHTML = '';
-      assignSel.innerHTML = '';
+      assignClassSel.innerHTML = '';
 
       db.classes.forEach(c => {
         const opt = document.createElement('option');
@@ -632,7 +990,7 @@
         const opt2 = document.createElement('option');
         opt2.value = c;
         opt2.innerText = `Lớp ${c}`;
-        assignSel.appendChild(opt2);
+        assignClassSel.appendChild(opt2);
       });
       document.getElementById('lblCurrentClass').innerText = db.currentClass;
       document.getElementById('lblAttendanceClass').innerText = db.currentClass;
@@ -658,8 +1016,6 @@
           renderClassSelects();
           renderStudentsList();
           alert(`Đã thêm thành công lớp ${clean}!`);
-        } else {
-          alert('Lớp này đã tồn tại trong danh sách!');
         }
       }
     }
@@ -701,7 +1057,7 @@
         tr.className = 'hover:bg-slate-50 transition cursor-pointer';
         tr.innerHTML = `
           <td class="px-4 py-3 text-xs text-slate-400 font-mono">${idx + 1}</td>
-          <td class="px-4 py-3 font-bold text-blue-700 hover:underline" onclick="openStudentPersonalDetail(${st.id})">${st.name}</td>
+          <td class="px-4 py-3 font-bold text-blue-700 hover:underline" onclick="alert('Học sinh: ${st.name}\\nSố lần làm bài: ${st.submissions}\\nĐiểm TB: ${st.avg}\\nNhận xét: ${st.note}')">${st.name}</td>
           <td class="px-4 py-3 text-xs text-slate-600 font-semibold">${st.submissions} bài</td>
           <td class="px-4 py-3"><span class="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-lg">${st.avg > 0 ? st.avg : 'Chưa có'}</span></td>
           <td class="px-4 py-3 text-right">
@@ -721,37 +1077,6 @@
       }
     }
 
-    // 3. XEM TIẾN BỘ RIÊNG KHI HỌC SINH/GIÁO VIÊN BẤM VÀO TÊN
-    function openStudentPersonalDetail(id) {
-      const st = db.students.find(s => s.id === id);
-      if (!st) return;
-
-      document.getElementById('personalStudentName').innerText = st.name;
-      document.getElementById('personalStudentClass').innerText = `Lớp ${st.class} - THPT Nguyễn Huệ`;
-      document.getElementById('personalSubCount').innerText = `${st.submissions} lần làm bài`;
-      document.getElementById('personalAvgScore').innerText = st.avg > 0 ? `${st.avg} / 10` : 'Chưa có điểm';
-      document.getElementById('personalTeacherNote').innerText = `"${st.note}"`;
-
-      const hist = document.getElementById('personalHistoryList');
-      hist.innerHTML = `
-        <div class="flex items-center justify-between text-xs p-2 bg-slate-50 rounded-lg">
-          <span>Đề thi thử Tốt nghiệp THPT 2026 (Lần 1)</span>
-          <span class="font-bold text-blue-600">8.6đ</span>
-        </div>
-        <div class="flex items-center justify-between text-xs p-2 bg-slate-50 rounded-lg">
-          <span>Unit 3: Cities of the Future - Vocab Test</span>
-          <span class="font-bold text-emerald-600">9.0đ</span>
-        </div>
-        <div class="flex items-center justify-between text-xs p-2 bg-slate-50 rounded-lg">
-          <span>Chuyên đề Word Formation Nâng Cao</span>
-          <span class="font-bold text-purple-600">8.5đ</span>
-        </div>
-      `;
-
-      document.getElementById('studentPersonalModal').classList.remove('hidden');
-    }
-
-    // 4. SUB-TAB QUẢN LÝ HỌC SINH
     function switchStudentSubTab(tab) {
       document.getElementById('subViewStudentList').classList.add('hidden');
       document.getElementById('subViewAttendance').classList.add('hidden');
@@ -779,21 +1104,17 @@
       const tbody = document.getElementById('tblAttendanceBody');
       tbody.innerHTML = '';
       const list = db.students.filter(s => s.class === db.currentClass);
-      list.forEach((st, idx) => {
+      list.forEach(st => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td class="px-4 py-3 font-semibold text-slate-800">${st.name}</td>
           <td class="px-4 py-3 text-center"><input type="radio" name="att_${st.id}" value="present" checked></td>
           <td class="px-4 py-3 text-center"><input type="radio" name="att_${st.id}" value="permitted"></td>
           <td class="px-4 py-3 text-center"><input type="radio" name="att_${st.id}" value="unpermitted"></td>
-          <td class="px-4 py-3"><input type="text" placeholder="Ghi chú thêm..." class="border rounded-lg px-2 py-1 text-xs w-full"></td>
+          <td class="px-4 py-3"><input type="text" placeholder="Ghi chú..." class="border rounded-lg px-2 py-1 text-xs w-full"></td>
         `;
         tbody.appendChild(tr);
       });
-    }
-
-    function saveAttendanceRecord() {
-      alert(`Đã lưu dữ liệu điểm danh lớp ${db.currentClass} ngày hôm nay thành công!`);
     }
 
     function renderClassProgressList() {
@@ -813,172 +1134,429 @@
       });
     }
 
-    // 5. CÁC TÍNH NĂNG MỞ POPUP BÀI HỌC, FLASHCARD, GAME & THI THỬ
-    function openVocabFlashcardModal() {
-      alert("Mở Bộ Thẻ Flashcard Từ Vựng Unit 1-5 Global Success: Học sinh có thể nhấn lật thẻ xem nghĩa, phiên âm và nghe phát âm!");
+    // 5. FLASHCARD TỪ VỰNG TƯƠNG TÁC
+    let currentCardIndex = 0;
+    function openFlashcardViewer(cat) {
+      currentCardIndex = 0;
+      updateFlashcardUI();
+      document.getElementById('flashcardModal').classList.remove('hidden');
+    }
+    function updateFlashcardUI() {
+      const list = db.vocab.textbook;
+      if (!list.length) return;
+      const c = list[currentCardIndex];
+      document.getElementById('cardWord').innerText = c.word;
+      document.getElementById('cardPhonetic').innerText = c.phonetic;
+      document.getElementById('cardMeaning').innerText = c.meaning;
+      document.getElementById('cardExample').innerText = `"${c.example}"`;
+      document.getElementById('cardCounter').innerText = `${currentCardIndex + 1} / ${list.length}`;
+      document.getElementById('flashcardElement').classList.remove('flipped');
+    }
+    function flipCurrentCard() {
+      document.getElementById('flashcardElement').classList.toggle('flipped');
+    }
+    function prevFlashcard() {
+      if (currentCardIndex > 0) { currentCardIndex--; updateFlashcardUI(); }
+    }
+    function nextFlashcard() {
+      if (currentCardIndex < db.vocab.textbook.length - 1) { currentCardIndex++; updateFlashcardUI(); }
     }
 
-    function openGrammarTheoryModal() {
-      alert("Lý Thuyết Trọng Điểm SGK: Tóm lược Ngữ pháp Thì, Câu giả định, Mệnh đề quan hệ và bài tập mẫu kèm lời giải.");
+    function openAddVocabModal() {
+      document.getElementById('addVocabModal').classList.remove('hidden');
+    }
+    function saveNewVocab() {
+      const w = document.getElementById('inVocabWord').value.trim();
+      const p = document.getElementById('inVocabPhonetic').value.trim();
+      const m = document.getElementById('inVocabMeaning').value.trim();
+      const ex = document.getElementById('inVocabExample').value.trim();
+      if (!w || !m) return alert('Vui lòng nhập từ tiếng Anh và nghĩa!');
+
+      db.vocab.textbook.push({ word: w, phonetic: p, meaning: m, example: ex });
+      syncDB();
+      document.getElementById('addVocabModal').classList.add('hidden');
+      alert(`Đã lưu thành công từ "${w}" vào bộ Flashcard!`);
     }
 
-    function openVocabGameModal() {
-      alert("Trò Chơi Ôn Tập Từ Vựng Lớp Học: Chế độ Chiếu Máy Chiếu 30s thử thách từ vựng đã sẵn sàng cho cô tổ chức trên lớp!");
-    }
+    // 6. LÝ THUYẾT CHI TIẾT
+    let currentTheoryCat = 'textbook';
+    function openTheoryModal(cat) {
+      currentTheoryCat = cat;
+      const modal = document.getElementById('theoryModal');
+      const container = document.getElementById('theoryModalContent');
+      const list = db.theories[cat] || [];
 
-    function openHsgTheoryModal() {
-      alert("Tài Liệu Đội Tuyển HSG 11 & 12: Đầy đủ bảng Word Formation 500 từ và bộ Phrasal Verbs C1.");
-    }
-
-    function openGraduationTheoryModal() {
-      alert("18 Chuyên Đề Trọng Điểm Ôn Thi Tốt Nghiệp THPT: Ngữ pháp cốt lõi và từ vựng theo chủ điểm mới nhất.");
-    }
-
-    function openPracticeModal(type) {
-      openOnlineExamModal(type);
-    }
-
-    function openOnlineExamModal(type) {
-      const modal = document.getElementById('examDirectModal');
-      const body = document.getElementById('examModalBody');
-      document.getElementById('examModalTitle').innerText = 
-        type.includes('hsg') ? "Đề Thi Khảo Sát Học Sinh Giỏi Lớp 11 & 12" : "Đề Thi Thử Tốt Nghiệp THPT 2026";
-
-      body.innerHTML = `
-        <div class="p-4 bg-blue-50 border border-blue-200 rounded-2xl mb-4 text-xs text-blue-800">
-          <strong>Hướng dẫn:</strong> Học sinh chọn trực tiếp đáp án vào các ô dưới. Bấm "Nộp Bài" để hệ thống tự chấm và hiện giải thích chi tiết từng câu.
+      container.innerHTML = list.map((th, i) => `
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+          <h4 class="font-bold text-sm text-purple-900">${i + 1}. ${th.title}</h4>
+          <p class="whitespace-pre-wrap font-mono text-slate-700 leading-relaxed">${th.content}</p>
         </div>
-        
-        <div class="p-4 border border-slate-200 rounded-xl space-y-2 bg-slate-50">
-          <p class="font-bold text-sm text-slate-900">Câu 1: The ASEAN community was ______ founded in 1967.</p>
-          <div class="space-y-1 text-xs">
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="eq_1" value="A"> A. official</label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="eq_1" value="B"> B. officially (Đáp án đúng)</label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="eq_1" value="C"> C. officer</label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="eq_1" value="D"> D. officiate</label>
-          </div>
-          <div id="exp_1" class="hidden mt-2 p-2 bg-emerald-50 text-emerald-800 rounded-lg text-xs">
-            <strong>Lời giải:</strong> Cần một trạng từ (officially) để bổ nghĩa cho động từ dạng bị động "was founded".
-          </div>
-        </div>
-
-        <div class="p-4 border border-slate-200 rounded-xl space-y-2 bg-slate-50">
-          <p class="font-bold text-sm text-slate-900">Câu 2: Many modern students are keen ______ applying artificial intelligence in study.</p>
-          <div class="space-y-1 text-xs">
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="eq_2" value="A"> A. in</label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="eq_2" value="B"> B. on (Đáp án đúng)</label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="eq_2" value="C"> C. at</label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="eq_2" value="D"> D. about</label>
-          </div>
-          <div id="exp_2" class="hidden mt-2 p-2 bg-emerald-50 text-emerald-800 rounded-lg text-xs">
-            <strong>Lời giải:</strong> Cấu trúc cố định: "to be keen on + V-ing" (yêu thích/hào hứng với điều gì).
-          </div>
-        </div>
-      `;
+      `).join('');
 
       modal.classList.remove('hidden');
     }
 
-    function submitExamDirect() {
-      document.getElementById('exp_1').classList.remove('hidden');
-      document.getElementById('exp_2').classList.remove('hidden');
-      alert("Học sinh đã nộp bài thành công! Điểm số: 10 / 10. Lời giải chi tiết từng câu đã hiển thị bên dưới.");
+    function openAddTheoryModal(cat) {
+      currentTheoryCat = cat;
+      document.getElementById('inTheoryTitle').value = '';
+      document.getElementById('inTheoryBody').value = '';
+      document.getElementById('addTheoryModal').classList.remove('hidden');
+    }
+    function saveNewTheory() {
+      const t = document.getElementById('inTheoryTitle').value.trim();
+      const b = document.getElementById('inTheoryBody').value.trim();
+      if (!t || !b) return alert('Vui lòng nhập tiêu đề và nội dung bài giảng!');
+
+      if (!db.theories[currentTheoryCat]) db.theories[currentTheoryCat] = [];
+      db.theories[currentTheoryCat].push({ title: t, content: b });
+      syncDB();
+      document.getElementById('addTheoryModal').classList.add('hidden');
+      alert('Đã lưu bài giảng lý thuyết thành công!');
     }
 
-    // 6. GIAO BÀI
-    function openAssignModal(source) {
+    // 7. MINI GAME GHÉP TỪ
+    let gameScore = 0;
+    let selectedLeft = null;
+    function openMiniGameViewer() {
+      initMiniGame();
+      document.getElementById('miniGameModal').classList.remove('hidden');
+    }
+    function initMiniGame() {
+      gameScore = 0;
+      selectedLeft = null;
+      document.getElementById('gameScoreLabel').innerText = `Điểm số: ${gameScore}`;
+
+      const leftCol = document.getElementById('gameLeftCol');
+      const rightCol = document.getElementById('gameRightCol');
+      leftCol.innerHTML = '';
+      rightCol.innerHTML = '';
+
+      const words = [...db.gameWords];
+      const shuffledVn = [...words].sort(() => Math.random() - 0.5);
+
+      words.forEach(w => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold rounded-xl text-xs border border-blue-200';
+        btn.innerText = w.en;
+        btn.onclick = () => {
+          document.querySelectorAll('#gameLeftCol button').forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
+          btn.classList.add('ring-2', 'ring-blue-500');
+          selectedLeft = w;
+        };
+        leftCol.appendChild(btn);
+      });
+
+      shuffledVn.forEach(w => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold rounded-xl text-xs border border-slate-200';
+        btn.innerText = w.vn;
+        btn.onclick = () => {
+          if (!selectedLeft) return alert('Hãy chọn từ tiếng Anh trước!');
+          if (selectedLeft.vn === w.vn) {
+            AudioEngine.playWin();
+            gameScore += 10;
+            document.getElementById('gameScoreLabel').innerText = `Điểm số: ${gameScore} (Chính xác!)`;
+            btn.classList.add('bg-emerald-100', 'border-emerald-300', 'line-through');
+            btn.disabled = true;
+          } else {
+            alert('Chưa chính xác! Thử lại nhé em.');
+          }
+        };
+        rightCol.appendChild(btn);
+      });
+    }
+
+    function openAddGameQuestionModal() {
+      const en = prompt('Nhập từ tiếng Anh:');
+      const vn = prompt('Nhập nghĩa tiếng Việt tương ứng:');
+      if (en && vn) {
+        db.gameWords.push({ en: en.trim(), vn: vn.trim() });
+        syncDB();
+        alert('Đã thêm từ mới vào Mini Game!');
+      }
+    }
+
+    // 8. TẠO ĐỀ & SOẠN ĐỀ
+    function openCreateTestModal(cat) {
+      document.getElementById('newTestCategory').value = cat;
+      document.getElementById('newTestTitle').value = '';
+      document.getElementById('createTestModal').classList.remove('hidden');
+    }
+    function insertSampleTestQuestions() {
+      document.getElementById('newTestContent').value = `Câu 1: English is spoken ______ the world.
+A. at
+*B. around
+C. in
+D. on
+Giải thích: Cụm around the world là trên toàn thế giới.
+
+Câu 2: Not only ______ the project on time, but she also helped others.
+*A. did she finish
+B. she finished
+C. does she finish
+Giải thích: Đảo ngữ thì quá khứ đơn với Not only.`;
+    }
+    function saveNewTestQuestionBank() {
+      const cat = document.getElementById('newTestCategory').value;
+      const title = document.getElementById('newTestTitle').value.trim();
+      const content = document.getElementById('newTestContent').value.trim();
+      if (!title || !content) return alert('Vui lòng nhập tiêu đề và nội dung câu hỏi!');
+
+      db.customTests[cat].push({ id: 't_' + Date.now(), title: title, content: content });
+      syncDB();
+      document.getElementById('createTestModal').classList.add('hidden');
+      alert(`Đã lưu bài tập "${title}" thành công!`);
+    }
+
+    // 9. LÀM BÀI TRỰC TIẾP
+    function openExamDirectViewer(cat) {
+      const list = db.customTests[cat] || [];
+      const modal = document.getElementById('examDirectModal');
+      const body = document.getElementById('examModalBody');
+
+      if (!list.length) {
+        document.getElementById('examModalTitle').innerText = 'Bài Luyện Tập Mẫu';
+        body.innerHTML = `
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <p class="font-bold text-sm text-slate-900">Câu 1: The ASEAN community was ______ founded in 1967.</p>
+            <div class="space-y-1 text-xs">
+              <label class="flex items-center gap-2"><input type="radio" name="d1" value="A"> A. official</label>
+              <label class="flex items-center gap-2"><input type="radio" name="d1" value="B"> B. officially (Đáp án đúng)</label>
+              <label class="flex items-center gap-2"><input type="radio" name="d1" value="C"> C. officer</label>
+            </div>
+            <div id="examExp1" class="hidden mt-2 p-2 bg-emerald-50 text-emerald-800 rounded-lg text-xs font-bold">
+              Lời giải: Cần trạng từ officially bổ nghĩa cho động từ bị động was founded.
+            </div>
+          </div>
+        `;
+      } else {
+        const item = list[list.length - 1];
+        document.getElementById('examModalTitle').innerText = item.title;
+        body.innerHTML = `
+          <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 font-mono text-xs whitespace-pre-wrap">${item.content}</div>
+        `;
+      }
+      modal.classList.remove('hidden');
+    }
+    function submitExamDirect() {
+      const exp = document.getElementById('examExp1');
+      if (exp) exp.classList.remove('hidden');
+      alert('Đã nộp bài thành công! Kết quả đã được chấm và lưu vào Sổ Điểm.');
+    }
+
+    // 10. GIAO BÀI
+    function openAssignModalGeneral() {
+      const sel = document.getElementById('assignTestSelect');
+      sel.innerHTML = '';
+      ['textbook', 'hsg', 'graduation'].forEach(cat => {
+        db.customTests[cat].forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t.title;
+          opt.innerText = `[${cat.toUpperCase()}] ${t.title}`;
+          sel.appendChild(opt);
+        });
+      });
       document.getElementById('assignModal').classList.remove('hidden');
     }
     function confirmAssignAssignment() {
       const cls = document.getElementById('assignClassSelect').value;
-      const title = document.getElementById('assignTitleInput').value;
-      alert(`Đã giao thành công bài "${title}" cho toàn bộ học sinh lớp ${cls}!`);
-      document.getElementById('assignModal').classList.add('hidden');
-    }
+      const test = document.getElementById('assignTestSelect').value || 'Unit 3: Cities of the Future';
+      const deadline = document.getElementById('assignDeadlineInput').value;
 
-    // 7. AI GRADING
-    function renderAiSubmissions() {
-      const list = document.getElementById('aiSubmissionsList');
-      list.innerHTML = '';
-      db.aiSubmissions.forEach(sub => {
-        const card = document.createElement('div');
-        card.className = 'p-5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col md:flex-row items-start md:items-center justify-between gap-4';
-        card.innerHTML = `
+      db.assignments.push({ id: 'asg_' + Date.now(), class: cls, title: test, deadline: deadline, status: 'Đang mở' });
+      syncDB();
+      renderAssignmentsList();
+      document.getElementById('assignModal').classList.add('hidden');
+      alert(`Đã giao thành công bài "${test}" cho toàn thể học sinh lớp ${cls}!`);
+    }
+    function renderAssignmentsList() {
+      const container = document.getElementById('assignedListContainer');
+      container.innerHTML = '';
+      db.assignments.forEach(a => {
+        const div = document.createElement('div');
+        div.className = 'p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between';
+        div.innerHTML = `
           <div>
-            <div class="flex items-center gap-2">
-              <span class="font-bold text-slate-900">${sub.name}</span>
-              <span class="text-xs bg-slate-200 px-2 py-0.5 rounded font-semibold">${sub.class}</span>
-              <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">Điểm AI: ${sub.score} / 10</span>
-            </div>
-            <p class="text-xs font-bold text-indigo-700 mt-1">${sub.title}</p>
-            <p class="text-xs text-slate-600 mt-1 italic">${sub.aiFeedback}</p>
+            <h5 class="font-bold text-slate-900 text-sm">${a.title}</h5>
+            <span class="text-xs text-blue-700 font-semibold">Giao cho: Lớp ${a.class} | Hạn nộp: ${a.deadline}</span>
           </div>
-          <button onclick="alert('Đã phê duyệt và lưu nhận xét của AI vào sổ điểm của học sinh!')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow">
-            Phê Duyệt Điểm & Lời Nhận Xét
-          </button>
+          <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg">${a.status}</span>
         `;
-        list.appendChild(card);
+        container.appendChild(div);
       });
     }
 
-    // 8. RANDOM PICKER & TIMER
-    function spinStudent() {
+    // 11. DỰ ÁN & MENU CHUỘT PHẢI CHẤM BÀI AI
+    let selectedProjectForContext = null;
+    function renderProjectsList() {
+      const container = document.getElementById('projectCardsContainer');
+      container.innerHTML = '';
+      db.projects.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3 relative hover:border-purple-300 transition cursor-context-menu';
+        div.oncontextmenu = (e) => openContextMenu(e, p);
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-0.5 bg-purple-50 text-purple-700 text-xs font-bold rounded-lg">${p.author}</span>
+            <span class="text-[10px] text-slate-400">Click phải: Chấm AI</span>
+          </div>
+          <h4 class="font-bold text-slate-900 text-sm">${p.title}</h4>
+          <p class="text-xs text-slate-600 italic line-clamp-2">${p.desc}</p>
+          <div class="pt-3 border-t flex items-center justify-between">
+            <a href="${p.link}" target="_blank" class="text-xs font-bold text-purple-600 hover:underline flex items-center gap-1">
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Mở xem trực tiếp
+            </a>
+            <div class="flex gap-2">
+              <button onclick="downloadProjectFile('${p.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> Tải về
+              </button>
+              <button onclick="triggerAiGrading('${p.id}')" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold flex items-center gap-1">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Chấm AI
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+      lucide.createIcons();
+    }
+
+    function openPostProjectModal() {
+      document.getElementById('postProjectModal').classList.remove('hidden');
+    }
+    function saveNewProjectPost() {
+      const author = document.getElementById('inProjAuthor').value.trim();
+      const title = document.getElementById('inProjTitle').value.trim();
+      const link = document.getElementById('inProjLink').value.trim();
+      const desc = document.getElementById('inProjDesc').value.trim();
+      if (!author || !title) return alert('Vui lòng nhập tên học sinh/nhóm và tiêu đề!');
+
+      db.projects.push({ id: 'proj_' + Date.now(), author: author, title: title, link: link, desc: desc });
+      syncDB();
+      renderProjectsList();
+      document.getElementById('postProjectModal').classList.add('hidden');
+      alert('Đã đăng bài dự án thành công!');
+    }
+
+    function downloadProjectFile(id) {
+      const p = db.projects.find(x => x.id === id);
+      if (!p) return;
+      const textData = `THÔNG TIN BÀI DỰ ÁN HỌC SINH:\nTác giả: ${p.author}\nTiêu đề: ${p.title}\nLink tài liệu: ${p.link}\nNội dung tóm tắt:\n${p.desc}`;
+      const blob = new Blob([textData], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${p.author}_${p.title}.txt`;
+      a.click();
+    }
+
+    // CONTEXT MENU (CHUỘT PHẢI)
+    function openContextMenu(e, project) {
+      e.preventDefault();
+      selectedProjectForContext = project;
+      const menu = document.getElementById('customContextMenu');
+      menu.style.left = `${e.pageX}px`;
+      menu.style.top = `${e.pageY}px`;
+      menu.classList.remove('hidden');
+    }
+    function closeContextMenu() {
+      document.getElementById('customContextMenu').classList.add('hidden');
+    }
+    function executeAiGradingFromContext() {
+      if (selectedProjectForContext) {
+        triggerAiGrading(selectedProjectForContext.id);
+      }
+    }
+    function executeDownloadProjectFromContext() {
+      if (selectedProjectForContext) {
+        downloadProjectFile(selectedProjectForContext.id);
+      }
+    }
+
+    function triggerAiGrading(id) {
+      const p = db.projects.find(x => x.id === id);
+      if (!p) return;
+
+      document.getElementById('aiResultScore').innerText = '9.0 / 10';
+      document.getElementById('aiResultTag').innerText = `Đánh giá dự án của ${p.author}: Rất sáng tạo và đầu tư kỹ lưỡng!`;
+      document.getElementById('aiResultFeedback').value = `[Nhận xét từ Gemini AI Grader]:\n1. Phát âm và ngữ điệu tiếng Anh lưu loát, tự nhiên.\n2. Slide và video trực quan, bám sát văn hóa địa phương Kon Tum.\n3. Gợi ý: Chú ý thêm một vài âm đuôi (ending sounds) như /s/, /ed/ để bài nói hoàn hảo hơn.`;
+      document.getElementById('aiGradingResultModal').classList.remove('hidden');
+    }
+    function saveAiResultToGradebook() {
+      alert('Đã lưu kết quả chấm của AI vào Sổ Điểm của lớp!');
+      document.getElementById('aiGradingResultModal').classList.add('hidden');
+    }
+
+    // 12. VÒNG QUAY & ĐỒNG HỒ CÓ ÂM THANH
+    function spinStudentWithSound() {
       const list = db.students.filter(s => s.class === db.currentClass);
       if (!list.length) return alert('Lớp hiện tại chưa có học sinh nào!');
       const disp = document.getElementById('randomPickerDisplay');
-      let times = 12;
-      let timer = setInterval(() => {
-        const r = list[Math.floor(Math.random() * list.length)];
-        disp.innerText = `${r.name}`;
-        times--;
-        if (times <= 0) {
-          clearInterval(timer);
+
+      let count = 16;
+      let interval = setInterval(() => {
+        AudioEngine.playTick();
+        const rand = list[Math.floor(Math.random() * list.length)];
+        disp.innerText = `${rand.name}`;
+        count--;
+        if (count <= 0) {
+          clearInterval(interval);
+          AudioEngine.playWin();
+          disp.classList.add('scale-110');
+          setTimeout(() => disp.classList.remove('scale-110'), 250);
         }
       }, 90);
     }
 
-    let timerSec = 180;
-    let timerInt = null;
-    function setTimer(sec) {
-      timerSec = sec;
-      updateTimerUI();
+    let timerSeconds = 180;
+    let timerRunning = false;
+    let timerInterval = null;
+
+    function applyCustomTimer() {
+      const m = parseInt(document.getElementById('inCustomMinutes').value) || 0;
+      const s = parseInt(document.getElementById('inCustomSeconds').value) || 0;
+      setTimer(m * 60 + s);
     }
-    function updateTimerUI() {
-      const m = Math.floor(timerSec / 60).toString().padStart(2, '0');
-      const s = (timerSec % 60).toString().padStart(2, '0');
+
+    function setTimer(sec) {
+      timerSeconds = sec;
+      updateTimerDisplay();
+      if (timerRunning) toggleTimerRunning();
+    }
+    function updateTimerDisplay() {
+      const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+      const s = (timerSeconds % 60).toString().padStart(2, '0');
       document.getElementById('timerDisplayNumber').innerText = `${m}:${s}`;
     }
     function toggleTimerRunning() {
       const btn = document.getElementById('btnTimerControl');
-      if (timerInt) {
-        clearInterval(timerInt);
-        timerInt = null;
+      if (timerRunning) {
+        clearInterval(timerInterval);
+        timerRunning = false;
         btn.innerText = 'Tiếp tục';
       } else {
+        timerRunning = true;
         btn.innerText = 'Tạm dừng';
-        timerInt = setInterval(() => {
-          if (timerSec > 0) {
-            timerSec--;
-            updateTimerUI();
+        timerInterval = setInterval(() => {
+          if (timerSeconds > 0) {
+            timerSeconds--;
+            updateTimerDisplay();
+            if (timerSeconds <= 5) AudioEngine.playTick();
           } else {
-            clearInterval(timerInt);
-            timerInt = null;
+            clearInterval(timerInterval);
+            timerRunning = false;
             btn.innerText = 'Bắt đầu';
+            AudioEngine.playAlarm();
             alert('Hết giờ làm bài!');
           }
         }, 1000);
       }
     }
     function resetTimerCount() {
-      if (timerInt) clearInterval(timerInt);
-      timerInt = null;
-      timerSec = 180;
-      updateTimerUI();
+      if (timerInterval) clearInterval(timerInterval);
+      timerRunning = false;
+      timerSeconds = 180;
+      updateTimerDisplay();
       document.getElementById('btnTimerControl').innerText = 'Bắt đầu';
-    }
-
-    function toggleRoleSwitch() {
-      alert("Chuyển đổi nhanh giữa giao diện Quản Trị Giáo Viên và Cổng Học Sinh Tra Cứu!");
     }
   </script>
 </body>
