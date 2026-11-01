@@ -10,17 +10,16 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .flashcard { perspective: 1000px; }
-    .flashcard-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
-    .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
-    .flashcard-front, .flashcard-back { backface-visibility: hidden; position: absolute; inset: 0; }
-    .flashcard-back { transform: rotateY(180deg); }
-    video::-internal-media-controls-download-button { display:none; }
-    video::-webkit-media-controls-enclosure { overflow:hidden; }
-    video::-webkit-media-controls-panel { width: calc(100% + 30px); }
+    .wheel-pointer {
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 30px solid #dc2626;
+    }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col" onclick="closeContextMenu()">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
 
   <!-- HEADER -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
@@ -36,9 +35,9 @@
       </div>
 
       <div class="flex items-center gap-2 sm:gap-3">
-        <button onclick="openModal('randomPickerModal')" class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-lg text-sm font-semibold transition">
+        <button onclick="openWheelModal()" class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-lg text-sm font-semibold transition">
           <i data-lucide="shuffle" class="w-4 h-4"></i>
-          <span>Vòng quay</span>
+          <span>Vòng quay may mắn</span>
         </button>
         <button onclick="openModal('timerModal')" class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg text-sm font-semibold transition">
           <i data-lucide="timer" class="w-4 h-4"></i>
@@ -121,7 +120,7 @@
             <i data-lucide="clipboard-paste" class="w-4 h-4 text-blue-600"></i> Dán danh sách học sinh
           </h3>
           <textarea id="txtPasteStudentsArea" rows="8" class="w-full text-xs font-mono border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500" placeholder="1. Lê Bảo Ngọc&#10;2. Trần Văn Nam..."></textarea>
-          <button onclick="importStudentsFromText()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow">Cập nhật</button>
+          <button onclick="importStudentsFromText()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow">Cập nhật danh sách</button>
         </div>
 
         <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
@@ -149,7 +148,6 @@
 
     <!-- 2. SÁCH GIÁO KHOA -->
     <section id="panel-textbook" class="space-y-6 hidden">
-      <!-- Cấp 1: Chọn Khối -->
       <div id="sgkLevel1" class="space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div onclick="enterGrade(10)" class="bg-white p-6 rounded-3xl border-2 border-slate-200 hover:border-blue-600 hover:shadow-xl transition cursor-pointer text-center space-y-3">
@@ -170,7 +168,6 @@
         </div>
       </div>
 
-      <!-- Cấp 2: Các chuyên mục SGK -->
       <div id="sgkLevel2" class="space-y-4 hidden">
         <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
           <button onclick="backToSgkGrades()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">&larr; Chọn Khối</button>
@@ -369,7 +366,7 @@
   <div id="pptViewerModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
     <div class="bg-white rounded-2xl max-w-6xl w-full h-[92vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="px-5 py-3 bg-slate-800 text-white flex items-center justify-between">
-        <h3 id="pptViewerTitle" class="font-bold text-sm truncate">Trình Chiếu Slide</h3>
+        <h3 id="pptViewerTitle" class="font-bold text-sm truncate">Trình Chiếu Slide Trực Tuyến</h3>
         <button onclick="closeModal('pptViewerModal')" class="text-slate-300 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <div class="flex-1 bg-black">
@@ -475,23 +472,34 @@
     </div>
   </div>
 
-  <!-- MODAL: VÒNG QUAY (THUẦN TÚY HỌ VÀ TÊN) -->
-  <div id="randomPickerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
+  <!-- MODAL: VÒNG QUAY MAY MẮN (CÓ VÒNG QUAY & CHÚC MỪNG HOÀN CHỈNH) -->
+  <div id="wheelModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 text-center space-y-4 shadow-2xl relative">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-bold text-slate-900 flex items-center gap-2"><i data-lucide="shuffle" class="w-5 h-5 text-amber-500"></i> Vòng quay</h3>
-        <button onclick="closeModal('randomPickerModal')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h3 class="font-bold text-slate-900 flex items-center gap-2"><i data-lucide="shuffle" class="w-5 h-5 text-amber-500"></i> Vòng quay may mắn</h3>
+        <button onclick="closeModal('wheelModal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
+      
       <div class="text-left text-xs space-y-1">
-        <label class="font-bold text-slate-700">Chọn lớp:</label>
-        <select id="wheelClassSelect" class="w-full border rounded-xl p-2 bg-slate-50 font-bold text-amber-800"></select>
+        <label class="font-bold text-slate-700">Chọn lớp quay học sinh:</label>
+        <select id="wheelClassSelect" onchange="drawWheel()" class="w-full border rounded-xl p-2 bg-slate-50 font-bold text-amber-800"></select>
       </div>
-      <div class="py-8 bg-amber-50 rounded-2xl border border-amber-200">
-        <div id="randomPickerDisplay" class="text-3xl font-extrabold text-amber-800">Sẵn sàng</div>
+
+      <!-- Khung vòng tròn vẽ bằng Canvas -->
+      <div class="relative w-[280px] h-[280px] mx-auto flex items-center justify-center">
+        <div class="absolute -top-1 z-20 wheel-pointer"></div>
+        <canvas id="wheelCanvas" width="280" height="280" class="rounded-full shadow-lg border-4 border-amber-400"></canvas>
       </div>
-      <button onclick="spinStudent()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold shadow transition flex items-center justify-center gap-2">
-        <i data-lucide="play" class="w-4 h-4"></i> Bắt đầu
+
+      <button id="btnSpinWheel" onclick="spinWheelAction()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold shadow transition flex items-center justify-center gap-2">
+        <i data-lucide="play" class="w-4 h-4"></i> Bắt đầu quay
       </button>
+
+      <!-- Khung chúc mừng học sinh được chọn -->
+      <div id="congratsBox" class="p-4 bg-emerald-100 border-2 border-emerald-400 rounded-2xl hidden space-y-1">
+        <span class="text-xs uppercase font-extrabold text-emerald-800">🎉 Chúc mừng học sinh được chọn! 🎉</span>
+        <h4 id="selectedStudentName" class="text-2xl font-extrabold text-emerald-950">Lê Bảo Ngọc</h4>
+      </div>
     </div>
   </div>
 
@@ -512,11 +520,11 @@
     </div>
   </div>
 
-  <!-- MODAL: DỰ ÁN HỌC TẬP -->
+  <!-- MODAL: DỰ ÁN HỌC TẬP (HỖ TRỢ CẢ FILE VIDEO TỪ MÁY & LINK YOUTUBE) -->
   <div id="uploadProjectModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-bold text-slate-900">Tải lên dự án</h3>
+        <h3 class="font-bold text-slate-900">Tải lên dự án học tập</h3>
         <button onclick="closeModal('uploadProjectModal')" class="text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <div class="space-y-3 text-xs">
@@ -529,20 +537,60 @@
           <input type="text" id="inProjTitle" class="w-full border rounded-xl p-2.5" placeholder="Ví dụ: Thuyết trình Văn hóa Kon Tum">
         </div>
         <div>
-          <label class="block font-semibold mb-1">Link YouTube:</label>
+          <label class="block font-semibold mb-1">Chọn tệp video từ máy tính (MP4 / WebM):</label>
+          <input type="file" id="inProjVideoFile" accept="video/*" class="w-full border rounded-xl p-2 bg-slate-50 text-slate-500">
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Hoặc dán link video YouTube:</label>
           <input type="text" id="inProjVideoLink" class="w-full border rounded-xl p-2.5 font-mono" placeholder="https://www.youtube.com/watch?v=...">
         </div>
       </div>
       <div class="flex justify-end gap-2 pt-2">
         <button onclick="closeModal('uploadProjectModal')" class="px-4 py-2 text-xs font-semibold text-slate-600">Hủy</button>
-        <button onclick="saveProjectItem()" class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow">Lưu</button>
+        <button onclick="saveProjectItemDirect()" class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow">Lưu dự án</button>
       </div>
     </div>
   </div>
 
-  <!-- SCRIPT LOGIC HOÀN TOÀN TỰ ĐỘNG & BẢO ĐẢM KHÔNG LỖI -->
+  <!-- SCRIPT HỆ THỐNG AN TOÀN -->
   <script>
-    const STORAGE_KEY = 'engVenture_lemai_nguyenhue_clean_v1';
+    // INDEXEDDB LƯU FILE VIDEO DUNG LƯỢNG LỚN
+    const IDB = {
+      db: null,
+      init() {
+        return new Promise((resolve) => {
+          const req = indexedDB.open('EngVentureDB_FinalStable', 1);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('files')) {
+              db.createObjectStore('files', { keyPath: 'id' });
+            }
+          };
+          req.onsuccess = (e) => { this.db = e.target.result; resolve(); };
+          req.onerror = () => resolve();
+        });
+      },
+      saveFile(id, fileBlob) {
+        return new Promise((resolve) => {
+          if (!this.db) return resolve();
+          const tx = this.db.transaction('files', 'readwrite');
+          tx.objectStore('files').put({ id, fileBlob });
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => resolve();
+        });
+      },
+      getFile(id) {
+        return new Promise((resolve) => {
+          if (!this.db) return resolve(null);
+          const tx = this.db.transaction('files', 'readonly');
+          const req = tx.objectStore('files').get(id);
+          req.onsuccess = () => resolve(req.result ? req.result.fileBlob : null);
+          req.onerror = () => resolve(null);
+        });
+      }
+    };
+
+    const STORAGE_KEY = 'engVenture_lemai_nguyenhue_final_clean';
     const DB = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
       classes: ['12A1', '12C1', '11A1', '11C1', '10A1'],
       currentClass: '12A1',
@@ -591,7 +639,8 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
           id: 'p_1',
           author: 'Lê Bảo Ngọc (12A1)',
           title: 'Thuyết trình Di sản Tây Nguyên',
-          url: 'https://www.youtube.com/embed/sample'
+          url: 'https://www.youtube.com/embed/sample',
+          hasLocal: false
         }
       ]
     };
@@ -604,7 +653,8 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
       localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
+      await IDB.init();
       lucide.createIcons();
       renderClassSelects();
       renderStudents();
@@ -630,7 +680,6 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
       if (activeBtn) activeBtn.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-blue-50 text-blue-700 flex items-center gap-2 shrink-0';
     }
 
-    // ĐIỀU HƯỚNG CÂY THƯ MỤC
     function enterGrade(grade) {
       currentGrade = grade;
       currentDomain = 'sgk';
@@ -678,7 +727,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
       openModal('uploadLessonModal');
     }
 
-    function saveNewLessonUpload() {
+    async function saveNewLessonUpload() {
       const type = document.getElementById('inLessonType').value;
       const title = document.getElementById('inLessonTitle').value.trim();
       const link = document.getElementById('inLessonLink').value.trim();
@@ -690,34 +739,35 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
       const key = `${currentDomain}_${currentGrade}`;
       if (!DB.lessonMaterials[key]) DB.lessonMaterials[key] = [];
 
+      const itemId = 'mat_' + Date.now();
       let fileUrl = link;
-      let isLocalFile = false;
+      let isLocal = false;
 
       if (file) {
-        fileUrl = URL.createObjectURL(file);
-        isLocalFile = true;
+        await IDB.saveFile(itemId, file);
+        isLocal = true;
       } else if (link) {
         if (link.includes('watch?v=')) fileUrl = link.replace('watch?v=', 'embed/');
         else if (link.includes('youtu.be/')) fileUrl = link.replace('youtu.be/', 'www.youtube.com/embed/');
       } else {
-        return alert('Vui lòng chọn tệp hoặc dán link!');
+        return alert('Vui lòng chọn tệp từ máy hoặc dán link!');
       }
 
       DB.lessonMaterials[key].push({
-        id: 'mat_' + Date.now(),
+        id: itemId,
         type, title,
         url: fileUrl,
         fileName: file ? file.name : (title + (type === 'video' ? '.mp4' : '.pptx')),
-        isLocal: isLocalFile
+        hasLocal: isLocal
       });
 
       syncDB();
-      renderLessonMaterials();
+      await renderLessonMaterials();
       closeModal('uploadLessonModal');
       alert('Tải lên thành công!');
     }
 
-    function renderLessonMaterials() {
+    async function renderLessonMaterials() {
       const container = document.getElementById('videoLessonsContainer');
       container.innerHTML = '';
       const key = `${currentDomain}_${currentGrade}`;
@@ -728,7 +778,14 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
         return;
       }
 
-      list.forEach((item, idx) => {
+      for (let idx = 0; idx < list.length; idx++) {
+        const item = list[idx];
+        let mediaSrc = item.url;
+        if (item.hasLocal) {
+          const blob = await IDB.getFile(item.id);
+          if (blob) mediaSrc = URL.createObjectURL(blob);
+        }
+
         const card = document.createElement('div');
         card.className = 'p-5 bg-white rounded-3xl border border-slate-200 shadow-sm space-y-3';
 
@@ -742,13 +799,16 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
             </div>
             <h4 class="font-bold text-sm text-slate-900">${idx + 1}. ${item.title}</h4>
             <div class="aspect-video bg-black rounded-2xl overflow-hidden shadow">
-              <video controls controlsList="nodownload" oncontextmenu="return false;" class="w-full h-full">
-                <source src="${item.url}">
-              </video>
+              ${item.hasLocal ? `
+                <video controls controlsList="nodownload" oncontextmenu="return false;" class="w-full h-full">
+                  <source src="${mediaSrc}">
+                </video>
+              ` : `
+                <iframe class="w-full h-full" src="${item.url}" title="Video" frameborder="0" allowfullscreen></iframe>
+              `}
             </div>
           `;
         } else {
-          // PPT MỞ TRÌNH CHIẾU TRỰC TIẾP TRÊN WEB KHÔNG TẢI VỀ
           card.innerHTML = `
             <div class="flex items-center justify-between">
               <span class="px-2.5 py-0.5 bg-amber-50 text-amber-800 text-xs font-bold rounded-lg flex items-center gap-1">
@@ -760,7 +820,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
             <div class="p-6 bg-amber-50/50 rounded-2xl border border-amber-200 text-center space-y-3">
               <i data-lucide="file-text" class="w-8 h-8 text-amber-600 mx-auto"></i>
               <p class="text-xs font-bold text-slate-700">${item.fileName}</p>
-              <button onclick="openPptLivePresentation('${item.title.replace(/'/g, "\\'")}', '${item.url}')" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5 mx-auto">
+              <button onclick="openPptLivePresentation('${item.title.replace(/'/g, "\\'")}', '${mediaSrc}')" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5 mx-auto">
                 <i data-lucide="play" class="w-3.5 h-3.5"></i> Trình chiếu trực tiếp
               </button>
             </div>
@@ -768,22 +828,24 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
         }
 
         container.appendChild(card);
-      });
+      }
       lucide.createIcons();
     }
 
-    // Mở khung chiếu PPT
     function openPptLivePresentation(title, url) {
       document.getElementById('pptViewerTitle').innerText = title;
       const frame = document.getElementById('pptViewerFrame');
       
-      // Nếu là link online thông thường (Canva, Slides, v.v.), mở trực tiếp; nếu file máy tính, nhúng viewer
-      if (url.startsWith('http://') || url.startsWith('https://')) {
-        frame.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
-      } else {
-        frame.src = url;
+      let viewUrl = url;
+      if (url.includes('docs.google.com/presentation') && !url.includes('/embed')) {
+        viewUrl = url.split('/edit')[0] + '/embed';
+      } else if (url.includes('canva.com/design') && !url.includes('view?embed')) {
+        viewUrl = url + '/view?embed';
+      } else if (url.startsWith('http://') || url.startsWith('https://')) {
+        viewUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
       }
 
+      frame.src = viewUrl;
       openModal('pptViewerModal');
     }
 
@@ -797,7 +859,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
     }
 
     // =========================================================================
-    // LÝ THUYẾT: CÓ NÚT TẠO MỚI (TẢI FILE WORD HOẶC DÁN NỘI DUNG)
+    // LÝ THUYẾT: CÓ NÚT TẠO MỚI (TẢI TỆP WORD HOẶC DÁN NỘI DUNG)
     // =========================================================================
     function enterTheoryModule(domain, grade) {
       currentDomain = domain;
@@ -823,7 +885,6 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
       openModal('createTheoryModal');
     }
 
-    // Đọc file Word / text khi tải lên
     function handleWordFileUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -1080,64 +1141,184 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
     }
 
     // =========================================================================
-    // DỰ ÁN, VÒNG QUAY, ĐỒNG HỒ & DANH SÁCH LỚP
+    // DỰ ÁN HỌC TẬP (HỖ TRỢ FILE VIDEO TỪ MÁY HOẶC YOUTUBE)
     // =========================================================================
-    function renderProjects() {
+    async function renderProjects() {
       const container = document.getElementById('projectCardsContainer');
       container.innerHTML = '';
-      DB.projects.forEach(p => {
+      for (let i = 0; i < DB.projects.length; i++) {
+        const p = DB.projects[i];
+        let mediaSrc = p.url;
+        if (p.hasLocal) {
+          const blob = await IDB.getFile(p.id);
+          if (blob) mediaSrc = URL.createObjectURL(blob);
+        }
+
         const div = document.createElement('div');
         div.className = 'bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3';
         div.innerHTML = `
           <div class="flex items-center justify-between">
             <span class="px-2.5 py-0.5 bg-purple-50 text-purple-700 text-xs font-bold rounded-lg">${p.author}</span>
+            <button onclick="deleteProject('${p.id}')" class="text-xs text-rose-500 hover:text-rose-700 font-bold">Xóa</button>
           </div>
           <h4 class="font-bold text-slate-900 text-base">${p.title}</h4>
           <div class="aspect-video bg-black rounded-2xl overflow-hidden shadow">
-            <iframe class="w-full h-full" src="${p.url}" title="Video" frameborder="0" allowfullscreen></iframe>
+            ${p.hasLocal ? `
+              <video controls controlsList="nodownload" oncontextmenu="return false;" class="w-full h-full">
+                <source src="${mediaSrc}">
+              </video>
+            ` : `
+              <iframe class="w-full h-full" src="${p.url}" title="Video" frameborder="0" allowfullscreen></iframe>
+            `}
           </div>
         `;
         container.appendChild(div);
-      });
+      }
       lucide.createIcons();
     }
 
-    function saveProjectItem() {
+    async function saveProjectItemDirect() {
       const author = document.getElementById('inProjAuthor').value.trim();
       const title = document.getElementById('inProjTitle').value.trim();
-      let link = document.getElementById('inProjVideoLink').value.trim() || 'https://www.youtube.com/embed/sample';
-
-      if (link.includes('watch?v=')) link = link.replace('watch?v=', 'embed/');
-      else if (link.includes('youtu.be/')) link = link.replace('youtu.be/', 'www.youtube.com/embed/');
+      let link = document.getElementById('inProjVideoLink').value.trim();
+      const fileInput = document.getElementById('inProjVideoFile');
 
       if (!author || !title) return alert('Vui lòng nhập tên học sinh và tiêu đề!');
 
-      DB.projects.push({ id: 'p_' + Date.now(), author, title, url: link });
+      const file = fileInput.files[0];
+      const pId = 'proj_' + Date.now();
+      let isLocal = false;
+
+      if (file) {
+        await IDB.saveFile(pId, file);
+        isLocal = true;
+      } else if (link) {
+        if (link.includes('watch?v=')) link = link.replace('watch?v=', 'embed/');
+        else if (link.includes('youtu.be/')) link = link.replace('youtu.be/', 'www.youtube.com/embed/');
+      } else {
+        return alert('Vui lòng chọn tệp video hoặc dán link YouTube!');
+      }
+
+      DB.projects.push({ id: pId, author, title, url: link, hasLocal: isLocal });
       syncDB();
       closeModal('uploadProjectModal');
       document.getElementById('inProjAuthor').value = '';
       document.getElementById('inProjTitle').value = '';
-      renderProjects();
-      alert('Đã lưu dự án thành công!');
+      document.getElementById('inProjVideoFile').value = '';
+      document.getElementById('inProjVideoLink').value = '';
+      await renderProjects();
+      alert('Đã lưu bài dự án thành công!');
     }
 
-    function spinStudent() {
+    function deleteProject(id) {
+      if (confirm('Xóa dự án này?')) {
+        DB.projects = DB.projects.filter(p => p.id !== id);
+        syncDB();
+        renderProjects();
+      }
+    }
+
+    // =========================================================================
+    // VÒNG QUAY MAY MẮN (VẼ CANVAS, HIỆN VÒNG VÀ CHÚC MỪNG HOÀN CHỈNH)
+    // =========================================================================
+    let wheelAngle = 0;
+    let isSpinning = false;
+    const wheelColors = ['#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316', '#6366f1'];
+
+    function openWheelModal() {
+      renderClassSelects();
+      openModal('wheelModal');
+      document.getElementById('congratsBox').classList.add('hidden');
+      setTimeout(drawWheel, 100);
+    }
+
+    function getSelectedClassStudents() {
       const cls = document.getElementById('wheelClassSelect').value;
-      const list = DB.students.filter(s => s.class === cls);
-      if (!list.length) return alert(`Lớp ${cls} chưa có học sinh nào!`);
-
-      const disp = document.getElementById('randomPickerDisplay');
-      let times = 16;
-      const interval = setInterval(() => {
-        const rand = list[Math.floor(Math.random() * list.length)];
-        disp.innerText = rand.name;
-        times--;
-        if (times <= 0) {
-          clearInterval(interval);
-        }
-      }, 80);
+      return DB.students.filter(s => s.class === cls);
     }
 
+    function drawWheel() {
+      const canvas = document.getElementById('wheelCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const list = getSelectedClassStudents();
+      const numSegments = list.length || 1;
+      const arcSize = (2 * Math.PI) / numSegments;
+      const radius = canvas.width / 2;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.translate(radius, radius);
+      ctx.rotate(wheelAngle);
+
+      for (let i = 0; i < numSegments; i++) {
+        const angle = i * arcSize;
+        ctx.beginPath();
+        ctx.fillStyle = wheelColors[i % wheelColors.length];
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, radius, angle, angle + arcSize);
+        ctx.lineTo(0, 0);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.save();
+        ctx.rotate(angle + arcSize / 2);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px Plus Jakarta Sans';
+        const name = list[i] ? list[i].name : 'Thành viên ' + (i + 1);
+        ctx.fillText(name, radius - 15, 5);
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+
+    function spinWheelAction() {
+      if (isSpinning) return;
+      const list = getSelectedClassStudents();
+      if (!list.length) return alert('Lớp chưa có học sinh nào!');
+
+      isSpinning = true;
+      document.getElementById('congratsBox').classList.add('hidden');
+      document.getElementById('btnSpinWheel').disabled = true;
+
+      const spins = 5 + Math.random() * 4;
+      const extraAngle = Math.random() * 2 * Math.PI;
+      const targetAngle = wheelAngle + spins * 2 * Math.PI + extraAngle;
+      const duration = 4000;
+      const start = performance.now();
+      const initialAngle = wheelAngle;
+
+      function animate(time) {
+        const elapsed = time - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        wheelAngle = initialAngle + (targetAngle - initialAngle) * easeOut;
+        drawWheel();
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          isSpinning = false;
+          document.getElementById('btnSpinWheel').disabled = false;
+          
+          const normalizedAngle = (1.5 * Math.PI - (wheelAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+          const arcSize = (2 * Math.PI) / list.length;
+          const winningIndex = Math.floor(normalizedAngle / arcSize) % list.length;
+          const winner = list[winningIndex];
+
+          document.getElementById('selectedStudentName').innerText = winner.name;
+          document.getElementById('congratsBox').classList.remove('hidden');
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // =========================================================================
+    // QUẢN LÝ LỚP & ĐỒNG HỒ
+    // =========================================================================
     function renderClassSelects() {
       const sel = document.getElementById('selectedClassFilter');
       const wheelSel = document.getElementById('wheelClassSelect');
@@ -1172,6 +1353,7 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
         if (!DB.classes.includes(clean)) {
           DB.classes.push(clean);
           DB.currentClass = clean;
+          syncDB();
           renderClassSelects();
           renderStudents();
           alert(`Đã thêm lớp ${clean}!`);
@@ -1235,7 +1417,6 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
       }
     }
 
-    // ĐỒNG HỒ
     let timerSec = 180;
     let timerInt = null;
     function toggleTimer() {
@@ -1271,8 +1452,6 @@ Giải thích: Get over nghĩa là vượt qua nỗi buồn.`
 
     function enterVocabModule(d, g) { alert('Mục từ vựng đang mở.'); }
     function backFromVocabHub() { switchMainTab('textbook'); }
-    function enterGameHub(d) { alert('Mục Game đang mở.'); }
-    function closeContextMenu() {}
   </script>
 </body>
 </html>
