@@ -347,6 +347,7 @@
         // 2. STATE & FIREBASE SETUP
         // ==========================================
         let app, auth, db, userId;
+        let isOfflineMode = false; // Chế độ không cần mạng
         let state = {
             role: null, // 'host' or 'player'
             pin: null,
@@ -359,9 +360,12 @@
         
         async function initSystem() {
             try {
+                // Đợi 1 giây để hệ thống tiêm cấu hình vào
+                await new Promise(r => setTimeout(r, 1000));
+                
                 const fbConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
                 if (fbConfigStr === '{}') {
-                    throw new Error("Không tìm thấy cấu hình máy chủ. Vui lòng mở lại cửa sổ xem trước (Preview).");
+                    throw new Error("Không tìm thấy cấu hình máy chủ mạng từ hệ thống.");
                 }
                 
                 const fbConfig = JSON.parse(fbConfigStr);
@@ -377,21 +381,27 @@
                 }
                 userId = userCred.user.uid;
                 
-                // Đảm bảo UI đã load xong mới hiển thị màn hình chọn
-                setTimeout(() => {
-                    showScreen('screen-role');
-                }, 500);
+                // Thành công -> Hiện chọn role
+                showScreen('screen-role');
             } catch (err) {
                 console.error("Firebase Init Error:", err);
                 const initScreen = document.getElementById('screen-init');
                 initScreen.innerHTML = `
-                    <div class="text-red-500 font-bold mb-4 text-2xl">⚠️ Mất kết nối máy chủ</div>
+                    <div class="text-red-500 font-bold mb-4 text-2xl">⚠️ Cửa sổ này đang chặn kết nối mạng</div>
                     <p class="text-sm text-gray-600 mb-6 font-semibold">${err.message}</p>
-                    <p class="text-sm text-gray-600 mb-6 italic">Gợi ý: Cô hãy bấm nút Tải lại trang bên dưới hoặc mở lại Preview ạ.</p>
-                    <button onclick="location.reload()" class="btn-primary px-6 py-2 rounded-xl text-lg font-bold">Tải lại trang</button>
+                    <div class="flex flex-col gap-3 justify-center items-center max-w-sm mx-auto">
+                        <button onclick="location.reload()" class="btn-primary w-full py-3 rounded-xl text-lg font-bold shadow-lg">🔄 Tải lại trang (Thử kết nối lại)</button>
+                        <button onclick="enableOfflineMode()" class="btn-secondary w-full py-3 rounded-xl text-lg font-bold border-2 border-fuchsia-500">👁️ Bỏ qua & Trải nghiệm giao diện</button>
+                        <p class="text-xs text-gray-500 mt-2">Chế độ trải nghiệm sẽ giả lập học sinh tự động nghiệm nghiệm để cô xem thiết kế.</p>
+                    </div>
                 `;
             }
         }
+
+        window.enableOfflineMode = function() {
+            isOfflineMode = true;
+            showScreen('screen-role');
+        };
 
         // ==========================================
         // 3. CORE LOGIC (HOST & PLAYER)
@@ -403,6 +413,10 @@
             if (role === 'host') {
                 hostCreateRoom();
             } else {
+                if (isOfflineMode) {
+                    alert("Chế độ Offline chỉ dành cho Giáo viên xem trước giao diện Tivi ạ.");
+                    return;
+                }
                 showScreen('screen-player-setup');
             }
         };
@@ -414,13 +428,29 @@
                 state.pin = pin;
                 
                 const initialData = {
-                    hostId: userId,
-                    stage: 0, // 0 = Lobby, 1 = Stage 1, etc.
+                    hostId: isOfflineMode ? 'local' : userId,
+                    stage: 0,
                     showAnswers: false,
                     teams: {}
                 };
                 for(let i=1; i<=8; i++) {
                     initialData.teams[i] = { joined: false, score: 0, answer: null };
+                }
+
+                if (isOfflineMode) {
+                    state.roomData = initialData;
+                    document.getElementById('host-pin-display').innerText = pin;
+                    showScreen('screen-host-lobby');
+                    renderHostState(state.roomData);
+                    
+                    // Giả lập học sinh tự động join sau vài giây
+                    setTimeout(() => {
+                        state.roomData.teams[1].joined = true;
+                        state.roomData.teams[3].joined = true;
+                        state.roomData.teams[5].joined = true;
+                        renderHostState(state.roomData);
+                    }, 1500);
+                    return;
                 }
 
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', pin);
@@ -431,11 +461,18 @@
                 listenToRoom(pin);
             } catch (err) {
                 console.error("Host create room error:", err);
-                alert("Không thể tạo phòng: " + err.message + "\n\nCô hãy thử tải lại trang nhé!");
+                alert("Không thể tạo phòng: " + err.message);
             }
         };
 
         window.hostStartGame = async function() {
+            if (isOfflineMode) {
+                state.roomData.stage = 1;
+                state.roomData.showAnswers = false;
+                renderHostState(state.roomData);
+                simulateStudentAnswers();
+                return;
+            }
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', state.pin);
             await updateDoc(docRef, { stage: 1, showAnswers: false });
         };
@@ -463,20 +500,38 @@
                         }
                     }
                     updates[`teams.${i}.score`] = t.score + pts;
+                    
+                    if (isOfflineMode) {
+                        state.roomData.teams[i].score += pts;
+                    }
                 }
             }
+            
+            if (isOfflineMode) {
+                state.roomData.showAnswers = true;
+                renderHostState(state.roomData);
+                return;
+            }
+
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', state.pin);
             await updateDoc(docRef, updates);
         };
 
         window.hostNextStage = async function() {
             const current = state.roomData.stage;
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', state.pin);
             
-            // Clear old answers
+            if (isOfflineMode) {
+                state.roomData.stage = current + 1;
+                state.roomData.showAnswers = false;
+                for(let i=1; i<=8; i++) state.roomData.teams[i].answer = null;
+                renderHostState(state.roomData);
+                simulateStudentAnswers();
+                return;
+            }
+
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', state.pin);
             let updates = { stage: current + 1, showAnswers: false };
             for(let i=1; i<=8; i++) updates[`teams.${i}.answer`] = null;
-            
             await updateDoc(docRef, updates);
         };
         
@@ -484,6 +539,34 @@
             renderHostSummary();
             showScreen('screen-host-summary');
         };
+
+        // Giả lập học sinh trả lời trong chế độ Offline
+        function simulateStudentAnswers() {
+            if (!isOfflineMode) return;
+            const task = STAGES[state.roomData.stage - 1];
+            setTimeout(() => {
+                if (state.roomData.teams[1].joined) {
+                    // Trả lời đúng hoàn toàn
+                    state.roomData.teams[1].answer = task.type === 'fill' ? task.answers.map(a=>a[0]) : [...task.answers];
+                    renderHostState(state.roomData);
+                }
+            }, 2000);
+            setTimeout(() => {
+                if (state.roomData.teams[3].joined) {
+                    // Trả lời sai 1 câu
+                    let ans = task.type === 'fill' ? task.answers.map(a=>a[0]) : [...task.answers];
+                    ans[0] = 'wrong';
+                    state.roomData.teams[3].answer = ans;
+                    renderHostState(state.roomData);
+                }
+            }, 3500);
+            setTimeout(() => {
+                if (state.roomData.teams[5].joined) {
+                    state.roomData.teams[5].answer = task.type === 'fill' ? task.answers.map(a=>a[0]) : [...task.answers];
+                    renderHostState(state.roomData);
+                }
+            }, 5000);
+        }
 
         // --- PLAYER LOGIC ---
         window.playerJoin = async function() {
